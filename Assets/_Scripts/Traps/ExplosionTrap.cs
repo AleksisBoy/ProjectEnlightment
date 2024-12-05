@@ -1,7 +1,8 @@
 using UnityEngine;
 
-public class ExplosionTrap : MonoBehaviour, IPickup
+public class ExplosionTrap : PickupObject
 {
+    [Header("Trap")]
     [SerializeField] private int maxDamage = 80;
     [SerializeField] private float damageScatterDistance = 5f;
 
@@ -25,16 +26,11 @@ public class ExplosionTrap : MonoBehaviour, IPickup
     {
         loaded = false;
     }
-    public void Pickup(Player player)
+    public override void Pickup(Player player)
     {
         if (!loaded) return;
 
         DeactivateTrap();
         // Give player that item (grenade or other)
     }
-    public void HighlightUpdate()
-    {
-        Debug.Log(name + " loaded is " + loaded);
-    }
-
 }

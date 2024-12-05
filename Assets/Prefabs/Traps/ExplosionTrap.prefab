@@ -67,6 +67,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 88651b370932b514d9c4fd917a50edfe, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  meshes:
+  - {fileID: 9044128371740045920}
   maxDamage: 80
   damageScatterDistance: 5
 --- !u!1 &3076937798190082147
@@ -161,5 +163,10 @@ PrefabInstance:
 --- !u!4 &8559340107816544474 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 600c87956fa1fa34c82e55ede9853d89, type: 3}
+  m_PrefabInstance: {fileID: 8161185564408008497}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &9044128371740045920 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 600c87956fa1fa34c82e55ede9853d89, type: 3}
   m_PrefabInstance: {fileID: 8161185564408008497}
   m_PrefabAsset: {fileID: 0}

@@ -6,6 +6,7 @@ public static class NovUtil
 {
     public static readonly int JumpHash = Animator.StringToHash("Jump");
     public static readonly int IsGroundedHash = Animator.StringToHash("IsGrounded");
+    public static readonly int IsCrouchedHash = Animator.StringToHash("IsCrouched");
     public static readonly int SpeedHash = Animator.StringToHash("Speed");
 
     public static T GetClosestFromArray<T>(Vector3 position, in T[] list) where T : Component

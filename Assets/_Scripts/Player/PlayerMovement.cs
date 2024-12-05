@@ -33,9 +33,14 @@ public class PlayerMovement : PlayerAction
         if (crouchKeyDown) Crouch();
 
         float speed = sprintKeyHold ? sprintSpeed : walkSpeed;
-        if (isCrouched) speed *= crouchSpeedModifer;
+        float maxSpeed = sprintSpeed;
+        if (isCrouched)
+        {
+            speed *= crouchSpeedModifer;
+            maxSpeed *= crouchSpeedModifer;
+        }
 
-        Move(GetMoveInputVector(), speed, sprintSpeed, true, true, jumpKeyDown);
+        Move(GetMoveInputVector(), speed, maxSpeed, true, true, jumpKeyDown);
     }
     public override bool ActionBlocked(CharacterAction blocker) 
     {
@@ -99,7 +104,8 @@ public class PlayerMovement : PlayerAction
         }
         if (setVelocity)
         {
-            //master.Animator.SetFloat(NovUtil.SpeedHash, velocity.magnitude / maxSpeed);
+            master.Animator.SetFloat(NovUtil.SpeedHash, 
+                Mathf.Lerp(master.Animator.GetFloat(NovUtil.SpeedHash), velocity.magnitude / maxSpeed, 6f * Time.deltaTime));
             master.RB.linearVelocity = velocity;
         }
     }
@@ -130,6 +136,7 @@ public class PlayerMovement : PlayerAction
         // move head down
         float mod = isCrouched ? 0.5f : 2f;
         master.Mesh.transform.localPosition *= mod;
+        master.Animator.SetBool(NovUtil.IsCrouchedHash, isCrouched);
     }
     private void Jump(ref Vector3 velocity)
     {
@@ -138,8 +145,8 @@ public class PlayerMovement : PlayerAction
     }
     private static Vector3 GetMoveInputVector()
     {
-        float horizontal = Input.GetAxis("Horizontal");
-        float vertical = Input.GetAxis("Vertical");
+        float horizontal = Input.GetAxisRaw("Horizontal");
+        float vertical = Input.GetAxisRaw("Vertical");
 
         Vector3 inputVector = new Vector3(horizontal, 0f, vertical);
         if (horizontal != 0 && vertical != 0)

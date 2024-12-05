@@ -153,10 +153,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dadb12ce5e765ea4c94c57dc370f0958, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  meshes:
+  - {fileID: 952707158712052066}
   ropeMesh: {fileID: 249000496514979685}
   coll: {fileID: 1530863119576492648}
   length: 2
-  triggerEvent:
+  activateEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  deactivateEvent:
     m_PersistentCalls:
       m_Calls: []
 --- !u!1 &8180111693874328908

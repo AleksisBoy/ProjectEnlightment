@@ -93,20 +93,20 @@ public class Player : MonoBehaviour, IAnimationDispatch, IHealth
         actionList.Add(action);
         CharacterAction.SortActions<CharacterAction>(actionList, out actionList);
     }
-    public void AddPickup(IPickup.Type type, int amount)
+    public void AddPickup(PlayerItemPickup.Type type, int amount)
     {
         switch (type)
         {
-            case IPickup.Type.Money:
+            case PlayerItemPickup.Type.Money:
                 money += amount;
                 break;
-            case IPickup.Type.HealingPotion:
+            case PlayerItemPickup.Type.HealingPotion:
                 healingPotions += amount;
                 break;
-            case IPickup.Type.ManaPotion:
+            case PlayerItemPickup.Type.ManaPotion:
                 manaPotions += amount;
                 break;
-            case IPickup.Type.AbilityPoint:
+            case PlayerItemPickup.Type.AbilityPoint:
                 abilityPoints += amount;
                 break;
         }

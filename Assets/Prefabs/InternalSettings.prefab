@@ -115,3 +115,4 @@ MonoBehaviour:
   characterMask:
     serializedVersion: 2
     m_Bits: 128
+  outlineLayer: 9

@@ -47,7 +47,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9c7e1438a0285034b88c843f71f8b617, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  type: 2
+  meshes:
+  - {fileID: 6919220321249981844}
+  type: 3
   amount: 1
 --- !u!65 &6888417703472087292
 BoxCollider:
@@ -147,15 +149,28 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -7511558181221131132, guid: 414c38aea22f4d141834d9afe1c78230, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 33db7ec6ce9f04d4cba2a2ba5befb405, type: 2}
     - target: {fileID: 919132149155446097, guid: 414c38aea22f4d141834d9afe1c78230, type: 3}
       propertyPath: m_Name
       value: model
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 414c38aea22f4d141834d9afe1c78230, type: 3}
+      propertyPath: m_Layer
+      value: 8
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 414c38aea22f4d141834d9afe1c78230, type: 3}
+--- !u!1 &6919220321249981844 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 414c38aea22f4d141834d9afe1c78230, type: 3}
+  m_PrefabInstance: {fileID: 7838352325449730245}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &7732067669980262190 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 414c38aea22f4d141834d9afe1c78230, type: 3}

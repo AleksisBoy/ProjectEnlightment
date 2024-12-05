@@ -1,16 +1,21 @@
 using UnityEngine;
 
-public class PlayerItemPickup : MonoBehaviour, IPickup
+public class PlayerItemPickup : PickupObject
 {
-    [SerializeField] private IPickup.Type type;
+    [Header("Player Item")]
+    [SerializeField] private Type type;
     [SerializeField] private int amount = 10;
-    public void Pickup(Player player)
+    public enum Type
+    {
+        None,
+        Money,
+        HealingPotion,
+        ManaPotion,
+        AbilityPoint
+    }
+    public override void Pickup(Player player)
     {
         player.AddPickup(type, amount);
         Destroy(gameObject);
-    }
-    public void HighlightUpdate()
-    {
-        Debug.Log(name + " highlighed");
     }
 }

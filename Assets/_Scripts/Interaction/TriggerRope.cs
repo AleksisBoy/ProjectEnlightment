@@ -1,8 +1,9 @@
 using UnityEngine;
 using UnityEngine.Events;
 
-public class TriggerRope : MonoBehaviour, IPickup
+public class TriggerRope : PickupObject
 {
+    [Header("Rope")]
     [SerializeField] private Transform ropeMesh = null;
     [SerializeField] private BoxCollider coll = null;
     [SerializeField] private float length = 1f;
@@ -35,13 +36,8 @@ public class TriggerRope : MonoBehaviour, IPickup
         if (deactivateEvent != null) deactivateEvent.Invoke();
         Destroy(gameObject);
     }
-    public void Pickup(Player player)
+    public override void Pickup(Player player)
     {
         Deactivate();
-    }
-
-    public void HighlightUpdate()
-    {
-
     }
 }

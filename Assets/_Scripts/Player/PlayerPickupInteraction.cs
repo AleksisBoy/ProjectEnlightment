@@ -7,18 +7,54 @@ public class PlayerPickupInteraction : PlayerAction
     [SerializeField] private float range = 1f;
     [SerializeField] private LayerMask pickupMask;
     [SerializeField] private KeyCode actionKey = KeyCode.None;
+
+    private PickupObject currentHighlighted = null;
     public override void ActionUpdate(out bool blockOther)
     {
         blockOther = false;
-        if (!master.RaycastForward(range, pickupMask, out RaycastHit hit, QueryTriggerInteraction.Collide)) return;
+        if (!master.RaycastForward(range, pickupMask, out RaycastHit hit, QueryTriggerInteraction.Collide))
+        {
+            ResetCurrentHighlighted();
+            return;
+        }
 
-        IPickup pickup = hit.transform.GetComponent<IPickup>();
-        if (pickup == null) return;
+        PickupObject pickup = hit.transform.GetComponent<PickupObject>();
+        if (pickup == null)
+        {
+            ResetCurrentHighlighted();
+            return;
+        }
 
-        pickup.HighlightUpdate();
-        if (!Input.GetKeyDown(actionKey)) return;
+        AssignCurrentHighlighted(pickup);
 
-        pickup.Pickup(master);
+        bool actionKeyDown = Input.GetKeyDown(actionKey);
+        if (actionKeyDown)
+        {
+            PickupCurrentHighlighted();
+        }
+        else
+        {
+            pickup.HighlightUpdate();
+        }
+    }
+    private void ResetCurrentHighlighted()
+    {
+        if (!currentHighlighted) return;
+        
+        currentHighlighted.HighlightEnd();
+        currentHighlighted = null;
+    }
+    private void AssignCurrentHighlighted(PickupObject pickup)
+    {
+        if (currentHighlighted) return;
+
+        currentHighlighted = pickup;
+        currentHighlighted.HighlightBegin();
+    }
+    private void PickupCurrentHighlighted()
+    {
+        currentHighlighted.HighlightEnd();
+        currentHighlighted.Pickup(master);
     }
     private void OnDrawGizmosSelected()
     {
