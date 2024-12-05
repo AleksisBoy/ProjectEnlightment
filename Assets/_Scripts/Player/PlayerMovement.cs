@@ -5,13 +5,18 @@ public class PlayerMovement : PlayerAction
     [Header("PlayerMovement")]
     [SerializeField] private float jumpForce = 10f;
     [SerializeField] private float walkSpeed = 5.5f;
-    [SerializeField] private float sprintSpeed = 5.5f;
+    [SerializeField] private float sprintSpeed = 7f;
+    [SerializeField] private float inAirSpeed = 4f;
     [SerializeField] private float crouchSpeedModifer = 0.5f;
     [SerializeField] private float rotationSpeed = 5f;
     [SerializeField] private LayerMask groundMask;
     [SerializeField] private Vector3 groundBoxCenterOffset = new Vector3(0, 0.3f, 0f);
     [SerializeField] private Vector3 groundBoxHalfExtents = new Vector3(0.4f, 0.05f, 0.4f);
     [SerializeField] private float groundCheckDistance = 0.4f;
+    [SerializeField] private Transform cameraTransform = null;
+    [SerializeField] private KeyCode jumpKey = KeyCode.Space;
+    [SerializeField] private KeyCode sprintKey = KeyCode.LeftShift;
+    [SerializeField] private KeyCode crouchKey = KeyCode.LeftControl;
 
     private bool isGrounded = true;
     private Vector3 lastGroundedPosition;
@@ -21,10 +26,17 @@ public class PlayerMovement : PlayerAction
     {
         blockOther = false;
 
-        bool spaceDown = Input.GetKeyDown(KeyCode.Space);
-        Move(GetMoveInputVector(), walkSpeed, walkSpeed, true, true, spaceDown);
-    }
+        bool jumpKeyDown = Input.GetKeyDown(jumpKey);
+        bool sprintKeyHold = Input.GetKey(sprintKey);
+        bool crouchKeyDown = Input.GetKeyDown(crouchKey);
 
+        if (crouchKeyDown) Crouch();
+
+        float speed = sprintKeyHold ? sprintSpeed : walkSpeed;
+        if (isCrouched) speed *= crouchSpeedModifer;
+
+        Move(GetMoveInputVector(), speed, sprintSpeed, true, true, jumpKeyDown);
+    }
     public override bool ActionBlocked(CharacterAction blocker) 
     {
         if (!isGrounded) return false;
@@ -67,23 +79,28 @@ public class PlayerMovement : PlayerAction
         bool setVelocity, bool setRotation, bool spaceDown)
     {
         float speed = baseSpeed;
-        Quaternion cameraLookRotation = master.PlayerCamera.CurrentRotationFlat;
-        //Quaternion cameraLookRotation = Quaternion.LookRotation(new Vector3(master.PlayerCamera.Get.transform.forward.x, 0f, master.PlayerCamera.transform.forward.z), Vector3.up);
+        //Quaternion cameraLookRotation = master.PlayerCamera.CurrentRotationFlat;
+        Quaternion cameraLookRotation = Quaternion.LookRotation(new Vector3(cameraTransform.forward.x, 0f, cameraTransform.forward.z), Vector3.up);
         Vector3 velocity = cameraLookRotation * inputVector;
-        Quaternion playerLookRotation = Quaternion.Slerp(master.RB.rotation, cameraLookRotation, rotationSpeed * Time.deltaTime);
+        Quaternion playerLookRotation = cameraLookRotation;
+        //Quaternion playerLookRotation = Quaternion.Slerp(master.RB.rotation, cameraLookRotation, rotationSpeed * Time.deltaTime);
         velocity.y = master.RB.linearVelocity.y;
         GroundCheck(spaceDown, ref speed, ref velocity, playerLookRotation);
 
         velocity = new Vector3(velocity.x * speed, velocity.y, velocity.z * speed);
 
-        if (setVelocity)
-        {
-            master.Animator.SetFloat(NovUtil.SpeedHash, velocity.magnitude / maxSpeed);
-            master.RB.linearVelocity = velocity;
-        }
         if (setRotation)
         {
-            master.RB.rotation = playerLookRotation;
+            Quaternion rot = Quaternion.Euler(new Vector3(master.PlayerCamera.transform.eulerAngles.x, master.PlayerCamera.transform.eulerAngles.y, 0f));
+
+            //master.Mesh.transform.localRotation = rot;
+            //master.Mesh.transform.rotation = playerLookRotation;
+            //master.RB.MoveRotation(playerLookRotation);
+        }
+        if (setVelocity)
+        {
+            //master.Animator.SetFloat(NovUtil.SpeedHash, velocity.magnitude / maxSpeed);
+            master.RB.linearVelocity = velocity;
         }
     }
     private void GroundCheck(bool spaceDown, ref float speed, ref Vector3 velocity, Quaternion playerLookRotation)
@@ -101,9 +118,18 @@ public class PlayerMovement : PlayerAction
         else
         {
             isGrounded = false;
-            speed *= 0.8f;
+            speed *= 0.9f;
         }
-        master.Animator.SetBool(NovUtil.IsGroundedHash, isGrounded);
+        //master.Animator.SetBool(NovUtil.IsGroundedHash, isGrounded);
+    }
+    private void Crouch()
+    {
+        if (!isGrounded) return;
+
+        isCrouched = !isCrouched;
+        // move head down
+        float mod = isCrouched ? 0.5f : 2f;
+        master.Mesh.transform.localPosition *= mod;
     }
     private void Jump(ref Vector3 velocity)
     {

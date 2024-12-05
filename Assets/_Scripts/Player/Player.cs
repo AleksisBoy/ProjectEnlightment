@@ -7,10 +7,16 @@ public class Player : MonoBehaviour, IAnimationDispatch, IHealth
     [SerializeField] private Collider playerCollider = null;
     [SerializeField] private GameObject playerMesh = null;
     [Header("Health")]
-    [SerializeField] private int maxHP = 4;
+    [SerializeField] private int maxHP = 100;
     [SerializeField] private float reviveTime = 2f;
+    [Header("Pickups")]
+    [SerializeField] private int maxHealingPotions = 3;
+    [SerializeField] private KeyCode healKey = KeyCode.H;
 
-    private int bits = 0;
+    private int money = 0;
+    private int healingPotions = 0;
+    private int manaPotions = 0;
+    private int abilityPoints = 0;
 
     private int hp = 0;
     private bool dead = false;
@@ -54,7 +60,11 @@ public class Player : MonoBehaviour, IAnimationDispatch, IHealth
 
         if (Input.GetKeyDown(KeyCode.P))
         {
-            GetHit(1, null);
+            GetHit(10, null);
+        }
+        if (Input.GetKeyDown(healKey))
+        {
+            HealWithPotion();
         }
 
         bool block = false;
@@ -83,9 +93,23 @@ public class Player : MonoBehaviour, IAnimationDispatch, IHealth
         actionList.Add(action);
         CharacterAction.SortActions<CharacterAction>(actionList, out actionList);
     }
-    public void AddBits(int amount)
+    public void AddPickup(IPickup.Type type, int amount)
     {
-        bits += amount;
+        switch (type)
+        {
+            case IPickup.Type.Money:
+                money += amount;
+                break;
+            case IPickup.Type.HealingPotion:
+                healingPotions += amount;
+                break;
+            case IPickup.Type.ManaPotion:
+                manaPotions += amount;
+                break;
+            case IPickup.Type.AbilityPoint:
+                abilityPoints += amount;
+                break;
+        }
     }
     public float GetDotProduct(Vector3 otherPosition)
     {
@@ -93,6 +117,15 @@ public class Player : MonoBehaviour, IAnimationDispatch, IHealth
         return Vector3.Dot(transform.forward, direction.normalized);
     }
 
+    public bool RaycastForward(float distance, LayerMask mask, out RaycastHit hit, QueryTriggerInteraction query = QueryTriggerInteraction.Ignore)
+    {
+        return Physics.Raycast(PlayerCamera.Position,
+            PlayerCamera.Forward,
+            out hit,
+            distance,
+            mask, 
+            query);
+    }
     // IAnimationDispatch
     public void CallAnimationEvent(string animEvent)
     {
@@ -136,6 +169,14 @@ public class Player : MonoBehaviour, IAnimationDispatch, IHealth
         playerMesh.SetActive(true);
         playerCollider.gameObject.SetActive(true);
     }
+    private void HealWithPotion()
+    {
+        if (healingPotions <= 0) return; // add feedback that not enough potions
+        if (hp >= maxHP) return; // add feedback that player is max hp
+
+        hp = Mathf.Min(maxHP, hp + (int)(maxHP * InternalSettings.HealPotionStrength));
+        healingPotions--;
+    }
 
     public void AssignOnHealthChanged(IHealth.OnHealthChanged action)
     {
@@ -151,4 +192,13 @@ public class Player : MonoBehaviour, IAnimationDispatch, IHealth
     public Animator Animator => animator;
     public Rigidbody RB => rb;
     public Collider Collider => playerCollider;
+
+    private void OnGUI()
+    {
+        GUI.Label(new Rect(10, 10, 500, 80), string.Format("Coins: {0}", money), InternalSettings.DebugStyle);
+        GUI.Label(new Rect(10, 90, 500, 80), string.Format("HP: {0}", hp), InternalSettings.DebugStyle);
+        GUI.Label(new Rect(10, 170, 500, 80), string.Format("HPotions: {0}", healingPotions), InternalSettings.DebugStyle);
+        GUI.Label(new Rect(10, 260, 500, 80), string.Format("MPotions: {0}", manaPotions), InternalSettings.DebugStyle);
+        GUI.Label(new Rect(10, 340, 500, 80), string.Format("APs: {0}", abilityPoints), InternalSettings.DebugStyle);
+    }
 }
