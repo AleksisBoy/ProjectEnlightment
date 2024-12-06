@@ -11,21 +11,35 @@ public class PlayerCombat : PlayerAction
     [SerializeField] private int damage = 25;
     [SerializeField] private Vector3 attackOffset = new Vector3(0, 1f, 0);
     [SerializeField] private Vector3 halfExtents = new Vector3(0.1f, 0.5f, 0.1f);
+    [SerializeField] private float frontAssassinationMinDot = 0.5f;
+
+    [SerializeField] private float staminaPerSecond = 0.1f;
+    [SerializeField] private float staminaReloadCooldown = 2f;
+    [SerializeField] private float staminaPerAttack = 0.1f;
+    [SerializeField] private float staminaMin = 0.5f;
+    [SerializeField] private float staminaMax = 1f;
 
     private bool isAttacking = false;
     private bool queueAttack = false;
+    private bool queueWindowOpen = false;
     private float lastAttackTime = 0;
 
+    private float combatStamina = 0f;
+
     private bool isBlocking = false;
+    private void Start()
+    {
+        combatStamina = 1f;
+        master.Animator.SetFloat(NovUtil.CombatStaminaHash, combatStamina);
+    }
     public override void ActionUpdate(out bool blockOther)
     {
-        blockOther = false;
         bool attackActionKeyDown = Input.GetKeyDown(attackActionKey);
         bool blockActionKeyHold = Input.GetKey(blockActionKey);
         
         if (attackActionKeyDown && !isBlocking)
         {
-            Attack();
+            AttackInput();
             blockOther = true;
         }
         else if (isAttacking)
@@ -45,18 +59,30 @@ public class PlayerCombat : PlayerAction
             master.Animator.SetBool(NovUtil.IsBlockingHash, isBlocking);
             blockOther = isBlocking;
         }
+
+        if (Time.time - lastAttackTime > staminaReloadCooldown)
+        {
+            combatStamina = Mathf.Min(staminaMax, combatStamina + staminaPerSecond * Time.deltaTime);
+            master.Animator.SetFloat(NovUtil.CombatStaminaHash, combatStamina);
+        }
     }
-    private void Attack()
+    private void AttackInput()
     {
         if (isAttacking)
         {
-            queueAttack = true;
+            queueAttack = queueWindowOpen;
         }
         else
         {
-            lastAttackTime = Time.time;
-            isAttacking = true;
+            Attack();
         }
+    }
+    private void Attack()
+    {
+        lastAttackTime = Time.time;
+        isAttacking = true;
+        queueWindowOpen = false;
+        queueAttack = false;
         master.Animator.SetTrigger(NovUtil.AttackHash);
     }
     public override void ActionDisturbed(CharacterAction disturber)
@@ -75,48 +101,65 @@ public class PlayerCombat : PlayerAction
             case "AttackFinish":
                 AnimationEvent_AttackFinish();
                 break;
+            case "OpenAttackWindow":
+                AnimationEvent_OpenNextAttackWindow();
+                break;
         }
     }
     private void AnimationEvent_AttackImpact()
     {
-        //Collider[] colls = Physics.OverlapBox(transform.position + transform.forward
-        //    * attackDistance + master.RB.rotation * attackOffset, halfExtents, master.RB.rotation);
+        combatStamina = Mathf.Max(staminaMin, combatStamina - staminaPerAttack);
+        master.Animator.SetFloat(NovUtil.CombatStaminaHash, combatStamina);
 
         if (!master.BoxCastForward(attackDistance, halfExtents,
             InternalSettings.CharacterMask, out Collider[] hits)) return;
         
-        foreach(Collider hit in hits)
+        foreach (Collider hit in hits)
         {
             IHealth health = hit.transform.GetComponentInParent<IHealth>();
             if (health == null || health.Equals(master)) continue;
 
-            health.GetHit(damage, gameObject);
+            Vector3 direction = hit.transform.position - transform.position;
+            direction.y = 0f;
+            direction.Normalize();
+            float dot = -Vector3.Dot(direction, transform.forward);
+            if (dot < -0.6f) // and its not alert
+            {
+                health.GetHit(damage * 100, gameObject, out bool diedFromStealth);
+                master.PlayerAnimation.LaunchStealthAssassination(health.GetAnimator(),
+                    -hit.transform.forward * 0.35f + -hit.transform.right * 0.5f);
+                return;
+            }
+            
+            health.GetHit(damage, gameObject, out bool died);
+            if (!died) return;
+            
+            if (dot > frontAssassinationMinDot)
+            {
+                master.PlayerAnimation.LaunchAssassination(health.GetAnimator(),
+                    hit.transform.forward / 2f + hit.transform.right / 2f);
+            }
+            else
+            {
+                health.GetAnimator()?.SetTrigger(NovUtil.DiedHash);
+            }
         }
-
-        /*
-        if (colls.Length > 0)
-        {
-            List<Component> list = NovUtil.CreateListFromArray<Component>(colls);
-            Component closest = NovUtil.GetClosestFromList<Component>(transform.position,
-                50, list, master.Collider);
-
-            if (closest == null) return;
-            IHealth health = closest.GetComponent<IHealth>();
-            if (health != null) health.GetHit(damage, gameObject);
-        }
-        */
     }
     private void AnimationEvent_AttackFinish()
     {
         if (!queueAttack)
         {
             isAttacking = false;
-            //master.Mesh.transform.localPosition = Vector3.zero;
+            queueWindowOpen = false;
         }
         else
         {
-            queueAttack = false;
+            Attack();
         }
+    }
+    private void AnimationEvent_OpenNextAttackWindow()
+    {
+        queueWindowOpen = true;
     }
     private void AnimationEvent_CombatParry()
     {
@@ -139,5 +182,10 @@ public class PlayerCombat : PlayerAction
         Gizmos.DrawCube(
             (master.PlayerCamera.Position + master.PlayerCamera.Position + (master.PlayerCamera.Forward * attackDistance)) / 2f,
             master.PlayerCamera.Rotation * halfExtents * 2f);
+    }
+    private void OnGUI()
+    {
+        GUI.Label(new Rect(10, 310, 500, 80), string.Format("Combat Stamina: {0:F}", combatStamina), InternalSettings.DebugStyle);
+
     }
 }

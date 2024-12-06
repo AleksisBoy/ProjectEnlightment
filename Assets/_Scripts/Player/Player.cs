@@ -26,6 +26,7 @@ public class Player : MonoBehaviour, IAnimationDispatch, IHealth
 
     private Rigidbody rb = null;
     private PlayerCamera playerCamera = null;
+    private PlayerAnimation playerAnimation = null;
 
     private List<CharacterAction> actionList = new List<CharacterAction>();
 
@@ -36,9 +37,13 @@ public class Player : MonoBehaviour, IAnimationDispatch, IHealth
         {
             actionList.Add(action);
             action.ActionSetup(this);
-            if(!playerCamera && action as PlayerCamera)
+            if (!playerCamera && action as PlayerCamera)
             {
                 playerCamera = action as PlayerCamera;
+            }
+            else if (!playerAnimation && action as PlayerAnimation)
+            {
+                playerAnimation = action as PlayerAnimation;
             }
         }
         CharacterAction.SortActions<CharacterAction>(actionList, out actionList);
@@ -60,7 +65,7 @@ public class Player : MonoBehaviour, IAnimationDispatch, IHealth
 
         if (Input.GetKeyDown(KeyCode.P))
         {
-            GetHit(10, null);
+            GetHit(10, null, out bool _died);
         }
         if (Input.GetKeyDown(healKey))
         {
@@ -158,11 +163,13 @@ public class Player : MonoBehaviour, IAnimationDispatch, IHealth
         }
     }
     // Health
-    public void GetHit(int damage, GameObject actor)
+    public void GetHit(int damage, GameObject actor, out bool died)
     {
+        died = false;
         hp -= damage;
         if (hp <= 0)
         {
+            died = true;
             Die();
         }
         onHealthChanged?.Invoke(hp, maxHP);
@@ -209,8 +216,13 @@ public class Player : MonoBehaviour, IAnimationDispatch, IHealth
     {
         onHealthChanged -= action;
     }
+    public Animator GetAnimator()
+    {
+        return animator;
+    }
 
     public PlayerCamera PlayerCamera => playerCamera;
+    public PlayerAnimation PlayerAnimation => playerAnimation;
     public GameObject Mesh => playerMesh;
     public Animator Animator => animator;
     public Rigidbody RB => rb;
@@ -219,9 +231,9 @@ public class Player : MonoBehaviour, IAnimationDispatch, IHealth
     private void OnGUI()
     {
         GUI.Label(new Rect(10, 10, 500, 80), string.Format("Coins: {0}", money), InternalSettings.DebugStyle);
-        GUI.Label(new Rect(10, 90, 500, 80), string.Format("HP: {0}", hp), InternalSettings.DebugStyle);
-        GUI.Label(new Rect(10, 170, 500, 80), string.Format("HPotions: {0}", healingPotions), InternalSettings.DebugStyle);
-        GUI.Label(new Rect(10, 260, 500, 80), string.Format("MPotions: {0}", manaPotions), InternalSettings.DebugStyle);
-        GUI.Label(new Rect(10, 340, 500, 80), string.Format("APs: {0}", abilityPoints), InternalSettings.DebugStyle);
+        GUI.Label(new Rect(10, 70, 500, 80), string.Format("HP: {0}", hp), InternalSettings.DebugStyle);
+        GUI.Label(new Rect(10, 130, 500, 80), string.Format("HPotions: {0}", healingPotions), InternalSettings.DebugStyle);
+        GUI.Label(new Rect(10, 190, 500, 80), string.Format("MPotions: {0}", manaPotions), InternalSettings.DebugStyle);
+        GUI.Label(new Rect(10, 250, 500, 80), string.Format("APs: {0}", abilityPoints), InternalSettings.DebugStyle);
     }
 }

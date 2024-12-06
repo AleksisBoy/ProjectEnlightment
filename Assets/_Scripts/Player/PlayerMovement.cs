@@ -59,7 +59,7 @@ public class PlayerMovement : PlayerAction
         Vector3 velocity = master.RB.linearVelocity;
         if (velocity.x != 0) velocity.x = NovUtil.MoveTowards(velocity.x, 0, Time.deltaTime * 10f);
         if (velocity.z != 0) velocity.z = NovUtil.MoveTowards(velocity.z, 0, Time.deltaTime * 10f);
-        master.RB.linearVelocity = velocity;
+        //master.RB.linearVelocity = velocity;
         master.Animator.SetFloat(NovUtil.SpeedHash, velocity.magnitude / walkSpeed);
 
 

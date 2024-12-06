@@ -4,7 +4,9 @@ public class InternalSettings : MonoBehaviour
 {
     [SerializeField] private GUIStyle debugStyle = GUIStyle.none;
     [SerializeField] private float healPotionStrength = 0.2f;
+    [Header("Masks")]
     [SerializeField] private LayerMask characterMask;
+    [Header("Layers")]
     [SerializeField] private int outlineLayer = -1;
     [SerializeField] private int ragdollLayer = 11;
     public static InternalSettings Get { get; private set; }

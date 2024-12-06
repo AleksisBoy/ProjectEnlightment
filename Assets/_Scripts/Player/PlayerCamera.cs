@@ -6,6 +6,8 @@ public class PlayerCamera : PlayerAction
 {
     [Header("Camera")]
     [SerializeField] private CinemachineCamera cineCamera = null;
+    [SerializeField] private CinemachinePanTilt panTilt = null;
+    [SerializeField] private CinemachineInputAxisController axisController = null;
     [SerializeField] private Vector3 cameraOffset = Vector3.zero;
     [SerializeField] private float rotationSpeed = 90f;
     [SerializeField] private float rotationLimit = 90f;
@@ -18,7 +20,17 @@ public class PlayerCamera : PlayerAction
     private Quaternion currentRotationFlat;
     public Quaternion CurrentRotationFlat => currentRotationFlat;
     public Vector3 Position => cineCamera.transform.position;
-    public Quaternion Rotation => cineCamera.transform.rotation;
+    public Quaternion Rotation 
+    { 
+        get
+        {
+            return cineCamera.transform.rotation;
+        }
+        set
+        {
+            cineCamera.transform.rotation = value;
+        }
+    }
     public Vector3 Forward => cineCamera.transform.forward;    
 
     private void Awake()
@@ -34,13 +46,22 @@ public class PlayerCamera : PlayerAction
     {
         blockOther = false;
 
+        panTilt.enabled = true;
+        axisController.enabled = true;
+        master.Mesh.transform.rotation = cineCamera.transform.rotation;
         //CalculateCurrentRotation(GetMouseInputVector());
+    }
+    public override bool ActionBlocked(CharacterAction blocker)
+    {
+        panTilt.enabled = false;
+        axisController.enabled = false;
+        cineCamera.transform.rotation = master.Mesh.transform.rotation;
+        return true;
     }
     private void LateUpdate()
     {
         if (!Update) return;
 
-        master.Mesh.transform.rotation = cineCamera.transform.rotation;
         //Quaternion rot = cineCamera.transform.rotation;
         Quaternion rot = Quaternion.Euler(new Vector3(0f, cineCamera.transform.eulerAngles.y, cineCamera.transform.eulerAngles.z));
         //master.RB.MoveRotation(Quaternion.Slerp(master.RB.rotation, rot, rotationSpeed * Time.deltaTime));
@@ -74,5 +95,13 @@ public class PlayerCamera : PlayerAction
         Vector2 inputVector = new Vector2(mouseX, mouseY);
 
         return inputVector;
+    }
+    public void SetPan(float pan)
+    {
+        panTilt.PanAxis.Value = pan;
+    }
+    public void SetTilt(float tilt)
+    {
+        panTilt.TiltAxis.Value = tilt;
     }
 }

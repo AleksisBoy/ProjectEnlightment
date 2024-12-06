@@ -14,6 +14,11 @@ public class Rookie : AIAgent, IHealth
     {
         base.Awake();
         hp = maxHP;
+        foreach(Rigidbody rb in ragdollRbs)
+        {
+            rb.interpolation = RigidbodyInterpolation.Interpolate;
+            rb.collisionDetectionMode = CollisionDetectionMode.ContinuousDynamic;
+        }
         EnableRagdoll(false);
     }
     private void EnableRagdoll(bool state)
@@ -33,22 +38,24 @@ public class Rookie : AIAgent, IHealth
     {
     }
 
-    public void GetHit(int damage, GameObject actor)
+    public void GetHit(int damage, GameObject actor, out bool died)
     {
+        died = false;
         if (!enabled) return;
 
         animator.SetTrigger(NovUtil.GetHitHash);
         hp -= damage;
         if(hp <= 0)
         {
+            died = true;
             Die();
         }
     }
     private void Die()
     {
         animator.ResetTrigger(NovUtil.GetHitHash);
-        animator.SetTrigger(NovUtil.DiedHash);
-        StartCoroutine(EnableRagdollDelay(3.5f));
+        //animator.SetTrigger(NovUtil.DiedHash);
+        StartCoroutine(EnableRagdollDelay(3f));
         navAgent.enabled = false;
         agentCollider.enabled = false;
     }
@@ -66,5 +73,9 @@ public class Rookie : AIAgent, IHealth
     public void RemoveOnHealthChanged(IHealth.OnHealthChanged action)
     {
         throw new System.NotImplementedException();
+    }
+    public Animator GetAnimator()
+    {
+        return animator;
     }
 }

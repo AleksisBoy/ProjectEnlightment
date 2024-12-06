@@ -21,7 +21,7 @@ public class ExplosionTrap : PickupObject
 
             float distance = Vector3.Distance(transform.position, coll.transform.position);
             float perc = Mathf.Abs(1f - (distance / damageScatterDistance));
-            health.GetHit((int)(maxDamage * perc), gameObject);
+            health.GetHit((int)(maxDamage * perc), gameObject, out bool died);
         }
         enabled = false;
     }

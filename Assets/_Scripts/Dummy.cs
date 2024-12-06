@@ -2,8 +2,9 @@ using UnityEngine;
 
 public class Dummy : MonoBehaviour, IHealth
 {
-    public void GetHit(int damage, GameObject actor)
+    public void GetHit(int damage, GameObject actor, out bool died)
     {
+        died = true;
         Destroy(gameObject);
     }
     public void AssignOnHealthChanged(IHealth.OnHealthChanged action)
@@ -14,5 +15,9 @@ public class Dummy : MonoBehaviour, IHealth
     public void RemoveOnHealthChanged(IHealth.OnHealthChanged action)
     {
         throw new System.NotImplementedException();
+    }
+    public Animator GetAnimator()
+    {
+        return null;
     }
 }

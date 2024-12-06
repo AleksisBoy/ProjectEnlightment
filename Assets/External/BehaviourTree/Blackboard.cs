@@ -18,7 +18,7 @@ public class Blackboard : MonoBehaviour {
 
             if (!instance) {
 
-                Blackboard[] blackboards = GameObject.FindObjectsOfType<Blackboard>();
+                Blackboard[] blackboards = FindObjectsByType<Blackboard>(FindObjectsSortMode.None);
                 if (blackboards != null) {
 
                     if (blackboards.Length == 1) {
