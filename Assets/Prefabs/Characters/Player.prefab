@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 8870685154985295319}
   - component: {fileID: 5719341710406171342}
   - component: {fileID: 358649362085444232}
+  - component: {fileID: 4546364229586668693}
   m_Layer: 7
   m_Name: Player
   m_TagString: Untagged
@@ -59,7 +60,7 @@ Rigidbody:
     m_Bits: 0
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 2048
   m_ImplicitCom: 1
   m_ImplicitTensor: 1
   m_UseGravity: 1
@@ -154,6 +155,26 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 256
   actionKey: 102
+--- !u!114 &4546364229586668693
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1098510750089763707}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f91c2b6afb90b584382971e01f690ef4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  priority: 12
+  update: 1
+  attackActionKey: 323
+  blockActionKey: 324
+  attackDistance: 1.5
+  damage: 25
+  attackOffset: {x: 0, y: 1, z: 0}
+  halfExtents: {x: 0.15, y: 0.2, z: 0.5}
 --- !u!1 &1439505434269604317
 GameObject:
   m_ObjectHideFlags: 0

@@ -44,7 +44,17 @@ public class PlayerMovement : PlayerAction
     }
     public override bool ActionBlocked(CharacterAction blocker) 
     {
-        if (!isGrounded) return false;
+        //if (!isGrounded) return false;
+
+        // Combat block react
+        if (blocker as PlayerCombat)
+        {
+            bool crouchKeyDown = Input.GetKeyDown(crouchKey);
+            if (crouchKeyDown) Crouch();
+
+            Move(GetMoveInputVector(), walkSpeed / 1.25f, sprintSpeed, true, true, false);
+            return true;
+        }
 
         Vector3 velocity = master.RB.linearVelocity;
         if (velocity.x != 0) velocity.x = NovUtil.MoveTowards(velocity.x, 0, Time.deltaTime * 10f);
@@ -52,17 +62,7 @@ public class PlayerMovement : PlayerAction
         master.RB.linearVelocity = velocity;
         master.Animator.SetFloat(NovUtil.SpeedHash, velocity.magnitude / walkSpeed);
 
-        /* // Combat block react
-        if (blocker as PlayerCombat)
-        {
-            Vector3 inputVector = GetInputVector();
-            Move(inputVector, 0, 1, false, true, false);
 
-            master.RB.position += master.RB.rotation * master.Mesh.transform.localPosition;
-            master.Mesh.transform.localPosition = Vector3.zero;
-        }
-        */
-        
         /*
         else if (blocker as PlayerCarry)
         {
@@ -141,7 +141,7 @@ public class PlayerMovement : PlayerAction
     private void Jump(ref Vector3 velocity)
     {
         velocity.y += jumpForce;
-        master.Animator.SetTrigger(NovUtil.JumpHash);
+        //master.Animator.SetTrigger(NovUtil.JumpHash);
     }
     private static Vector3 GetMoveInputVector()
     {

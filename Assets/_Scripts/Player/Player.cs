@@ -119,12 +119,35 @@ public class Player : MonoBehaviour, IAnimationDispatch, IHealth
 
     public bool RaycastForward(float distance, LayerMask mask, out RaycastHit hit, QueryTriggerInteraction query = QueryTriggerInteraction.Ignore)
     {
-        return Physics.Raycast(PlayerCamera.Position,
+        return Physics.Raycast(
+            PlayerCamera.Position,
             PlayerCamera.Forward,
             out hit,
             distance,
             mask, 
             query);
+    }
+    public bool BoxCastForward(float distance, Vector3 halfExtents, LayerMask mask, out Collider[] hits, QueryTriggerInteraction query = QueryTriggerInteraction.Ignore)
+    {
+        hits = Physics.OverlapBox(
+            (PlayerCamera.Position + playerCamera.Position + (playerCamera.Forward * distance)) / 2f,
+            halfExtents, 
+            playerCamera.Rotation,
+            mask, 
+            query);
+
+        /*
+        hits = Physics.BoxCastAll(
+            (PlayerCamera.Position + playerCamera.Position + (playerCamera.Forward * distance)) / 2f,
+            halfExtents,
+            PlayerCamera.Forward,
+            PlayerCamera.Rotation,
+            distance,
+            mask,
+            query);
+        */
+
+        return hits.Length > 0;
     }
     // IAnimationDispatch
     public void CallAnimationEvent(string animEvent)

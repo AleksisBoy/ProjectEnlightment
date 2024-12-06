@@ -6,11 +6,13 @@ public class ExplosionTrap : PickupObject
     [SerializeField] private int maxDamage = 80;
     [SerializeField] private float damageScatterDistance = 5f;
 
+    private bool working = true;
     private bool loaded = true;
     public void ActivateTrap()
     {
-        if (!loaded) return;
+        if (!loaded || !working) return;
         loaded = false;
+        working = false;
 
         foreach(Collider coll in Physics.OverlapSphere(transform.position, damageScatterDistance, InternalSettings.CharacterMask))
         {
@@ -21,16 +23,19 @@ public class ExplosionTrap : PickupObject
             float perc = Mathf.Abs(1f - (distance / damageScatterDistance));
             health.GetHit((int)(maxDamage * perc), gameObject);
         }
+        enabled = false;
     }
     public void DeactivateTrap()
     {
-        loaded = false;
+        working = false;
     }
     public override void Pickup(Player player)
     {
         if (!loaded) return;
 
         DeactivateTrap();
+        loaded = false;
+        enabled = false;
         // Give player that item (grenade or other)
     }
 }

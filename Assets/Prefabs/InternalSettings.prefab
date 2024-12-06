@@ -114,5 +114,5 @@ MonoBehaviour:
   healPotionStrength: 0.2
   characterMask:
     serializedVersion: 2
-    m_Bits: 128
+    m_Bits: 1152
   outlineLayer: 9

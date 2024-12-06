@@ -69,6 +69,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   meshes:
   - {fileID: 9044128371740045920}
+  - {fileID: 2720675930743210813}
+  - {fileID: 6121953242093391881}
+  - {fileID: 7782501763955037055}
+  - {fileID: 6802152804503116197}
   maxDamage: 80
   damageScatterDistance: 5
 --- !u!1 &3076937798190082147
@@ -160,6 +164,26 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 600c87956fa1fa34c82e55ede9853d89, type: 3}
+--- !u!1 &2720675930743210813 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: -3133498875991405556, guid: 600c87956fa1fa34c82e55ede9853d89, type: 3}
+  m_PrefabInstance: {fileID: 8161185564408008497}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &6121953242093391881 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: -6505494680676671688, guid: 600c87956fa1fa34c82e55ede9853d89, type: 3}
+  m_PrefabInstance: {fileID: 8161185564408008497}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &6802152804503116197 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 3396913584297481876, guid: 600c87956fa1fa34c82e55ede9853d89, type: 3}
+  m_PrefabInstance: {fileID: 8161185564408008497}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &7782501763955037055 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 2108629213487684686, guid: 600c87956fa1fa34c82e55ede9853d89, type: 3}
+  m_PrefabInstance: {fileID: 8161185564408008497}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &8559340107816544474 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 600c87956fa1fa34c82e55ede9853d89, type: 3}

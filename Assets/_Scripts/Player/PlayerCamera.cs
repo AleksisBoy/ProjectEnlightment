@@ -18,6 +18,7 @@ public class PlayerCamera : PlayerAction
     private Quaternion currentRotationFlat;
     public Quaternion CurrentRotationFlat => currentRotationFlat;
     public Vector3 Position => cineCamera.transform.position;
+    public Quaternion Rotation => cineCamera.transform.rotation;
     public Vector3 Forward => cineCamera.transform.forward;    
 
     private void Awake()

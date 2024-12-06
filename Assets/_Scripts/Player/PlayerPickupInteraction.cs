@@ -19,7 +19,7 @@ public class PlayerPickupInteraction : PlayerAction
         }
 
         PickupObject pickup = hit.transform.GetComponent<PickupObject>();
-        if (pickup == null)
+        if (pickup == null || !pickup.enabled)
         {
             ResetCurrentHighlighted();
             return;
@@ -36,6 +36,11 @@ public class PlayerPickupInteraction : PlayerAction
         {
             pickup.HighlightUpdate();
         }
+    }
+    public override bool ActionBlocked(CharacterAction blocker)
+    {
+        ResetCurrentHighlighted();
+        return true;
     }
     private void ResetCurrentHighlighted()
     {
