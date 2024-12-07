@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 
 public class PlayerMovement : PlayerAction
@@ -9,6 +10,7 @@ public class PlayerMovement : PlayerAction
     [SerializeField] private float inAirSpeed = 4f;
     [SerializeField] private float crouchSpeedModifer = 0.5f;
     [SerializeField] private float rotationSpeed = 5f;
+    [SerializeField] private float crouchLerpSeconds = 0.25f;
     [SerializeField] private LayerMask groundMask;
     [SerializeField] private Vector3 groundBoxCenterOffset = new Vector3(0, 0.3f, 0f);
     [SerializeField] private Vector3 groundBoxHalfExtents = new Vector3(0.4f, 0.05f, 0.4f);
@@ -22,6 +24,11 @@ public class PlayerMovement : PlayerAction
     private Vector3 lastGroundedPosition;
 
     private bool isCrouched = false;
+    private bool isCrouchingLerping = false;
+    private void OnValidate()
+    {
+        if (crouchLerpSeconds <= 0f) crouchLerpSeconds = 0.01f;
+    }
     public override void ActionUpdate(out bool blockOther)
     {
         blockOther = false;
@@ -130,13 +137,28 @@ public class PlayerMovement : PlayerAction
     }
     private void Crouch()
     {
-        if (!isGrounded) return;
+        if (!isGrounded || isCrouchingLerping) return;
 
         isCrouched = !isCrouched;
         // move head down
         float mod = isCrouched ? 0.5f : 2f;
-        master.Mesh.transform.localPosition *= mod;
+        StartCoroutine(TransformLerping(master.Mesh.transform, 
+            master.Mesh.transform.localPosition * mod, crouchLerpSeconds));
         master.Animator.SetBool(NovUtil.IsCrouchedHash, isCrouched);
+    }
+    private IEnumerator TransformLerping(Transform obj, Vector3 newLocalPos, float seconds)
+    {
+        isCrouchingLerping = true;
+        float weight = 0f;
+        Vector3 startPos = obj.localPosition;
+        while(weight < 1f)
+        {
+            obj.localPosition = Vector3.Lerp(startPos, newLocalPos, weight);
+            weight += Time.deltaTime / crouchLerpSeconds;
+            yield return null;
+        }
+        obj.localPosition = newLocalPos;
+        isCrouchingLerping = false;
     }
     private void Jump(ref Vector3 velocity)
     {

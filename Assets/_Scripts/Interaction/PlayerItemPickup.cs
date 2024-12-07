@@ -3,19 +3,18 @@ using UnityEngine;
 public class PlayerItemPickup : PickupObject
 {
     [Header("Player Item")]
-    [SerializeField] private Type type;
-    [SerializeField] private int amount = 10;
-    public enum Type
+    [SerializeField] private EItem item;
+    [SerializeField] private int amount = 1;
+    private void OnValidate()
     {
-        None,
-        Money,
-        HealingPotion,
-        ManaPotion,
-        AbilityPoint
+        if (!item) return;
+
+        if (item.Unique) amount = 1;
+        if (amount <= 0) amount = 1;
     }
     public override void Pickup(Player player)
     {
-        player.AddPickup(type, amount);
+        player.AddItem(item, amount);
         Destroy(gameObject);
     }
 }

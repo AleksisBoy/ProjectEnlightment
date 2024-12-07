@@ -3,7 +3,6 @@ using UnityEngine;
 public class PlayerPickupInteraction : PlayerAction
 {
     [Header("Pickup Interaction")]
-    [SerializeField] private bool debugOn = false;
     [SerializeField] private float range = 1f;
     [SerializeField] private LayerMask pickupMask;
     [SerializeField] private KeyCode actionKey = KeyCode.None;

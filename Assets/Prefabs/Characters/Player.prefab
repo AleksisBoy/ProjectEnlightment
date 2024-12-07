@@ -16,6 +16,7 @@ GameObject:
   - component: {fileID: 358649362085444232}
   - component: {fileID: 4546364229586668693}
   - component: {fileID: 3943841550154725332}
+  - component: {fileID: 994080413753219316}
   m_Layer: 7
   m_Name: Player
   m_TagString: Untagged
@@ -106,6 +107,7 @@ MonoBehaviour:
   inAirSpeed: 4
   crouchSpeedModifer: 0.3
   rotationSpeed: 30
+  crouchLerpSeconds: 0.14
   groundMask:
     serializedVersion: 2
     m_Bits: 119
@@ -150,7 +152,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   priority: 11
   update: 1
-  debugOn: 1
   range: 1.5
   pickupMask:
     serializedVersion: 2
@@ -178,11 +179,11 @@ MonoBehaviour:
   attackOffset: {x: 0, y: 1, z: 0}
   halfExtents: {x: 0.15, y: 0.2, z: 0.5}
   frontAssassinationMinDot: 0.5
-  sheathTimer: 0.78
+  sheathTimer: 0.65
   staminaPerSecond: 0.16
   staminaReloadCooldown: 1.2
-  staminaPerAttack: 0.07
-  staminaMin: 0.6
+  staminaPerAttack: 0.06
+  staminaMin: 0.66
   staminaMax: 1
 --- !u!114 &3943841550154725332
 MonoBehaviour:
@@ -200,6 +201,24 @@ MonoBehaviour:
   update: 1
   playerAnimator: {fileID: 0}
   handsAnimator: {fileID: 0}
+--- !u!114 &994080413753219316
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1098510750089763707}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fb6e28eaf7827dc429694410b0910294, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  priority: 25
+  update: 1
+  actionKey: 325
+  weaponWheel: {fileID: 0}
+  timeToOpen: 0.2
+  timeScaleWhileOpen: 0.025
 --- !u!1 &2119657537053145771
 GameObject:
   m_ObjectHideFlags: 0

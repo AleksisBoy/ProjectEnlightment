@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 public class InternalSettings : MonoBehaviour
@@ -9,6 +10,11 @@ public class InternalSettings : MonoBehaviour
     [Header("Layers")]
     [SerializeField] private int outlineLayer = -1;
     [SerializeField] private int ragdollLayer = 11;
+    [Header("Items")]
+    [SerializeField] private Inventory.Item[] playerDefaultItems = null;
+    [Header("UI")]
+    [SerializeField] private Color defaultIconColor = Color.white;
+    [SerializeField] private Color selectedIconColor = Color.white;
     public static InternalSettings Get { get; private set; }
 
     public static GUIStyle DebugStyle => Get.debugStyle;
@@ -16,9 +22,27 @@ public class InternalSettings : MonoBehaviour
     public static LayerMask CharacterMask => Get.characterMask;
     public static int OutlineLayer => Get.outlineLayer;
     public static int RagdollLayer => Get.ragdollLayer;
+    public static Color SelectedIconColor => Get.selectedIconColor;
+    public static Color DefaultIconColor => Get.defaultIconColor;
     private void Awake()
     {
         if (Get == null) Get = this;
-        else { Destroy(gameObject); return; }
+        else if (Get != this) { Destroy(gameObject); return; }
+    }
+    public static Inventory GetDefaultPlayerInventory()
+    {
+        Inventory inventory = new Inventory();
+        if (Get == null) Get = FindAnyObjectByType<InternalSettings>();
+        if (!Get) return inventory;
+        foreach(Inventory.Item item in Get.playerDefaultItems)
+        {
+            inventory.Add(item.get, item.amount);
+        }
+        return inventory;
+    }
+    public static void EnableCursor(bool state)
+    {
+        Cursor.lockState = state ? CursorLockMode.None : CursorLockMode.Locked;
+        Cursor.visible = state;
     }
 }

@@ -48,7 +48,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   meshes:
   - {fileID: 6004105644901848269}
-  type: 4
+  item: {fileID: 11400000, guid: 88488570e5f74034b9855c5bc0610519, type: 2}
   amount: 1
 --- !u!65 &8943573714986557269
 BoxCollider:

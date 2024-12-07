@@ -5,7 +5,7 @@ public class CharacterAction : MonoBehaviour, IAnimationDispatch
 {
     [Header("Base")]
     [SerializeField] protected int priority = 0;
-    [SerializeField] protected bool update = false;
+    [SerializeField] protected bool update = true;
 
     protected bool isSetup = false;
     public int Priority => priority;

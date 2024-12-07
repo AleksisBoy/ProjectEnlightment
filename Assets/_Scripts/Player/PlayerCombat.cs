@@ -68,11 +68,7 @@ public class PlayerCombat : PlayerAction
             blockOther = isBlocking;
         }
 
-        if (NovUtil.TimeCheck(lastAttackTime, staminaReloadCooldown))
-        {
-            combatStamina = Mathf.Min(staminaMax, combatStamina + staminaPerSecond * Time.deltaTime);
-            master.Animator.SetFloat(NovUtil.CombatStaminaHash, combatStamina);
-        }
+        StaminaRestoreUpdate();
     }
     private void AttackInput()
     {
@@ -108,6 +104,14 @@ public class PlayerCombat : PlayerAction
         sheathInputReset = false;
         master.Animator.SetBool(NovUtil.SheathedHash, sheathed);
     }
+    private void StaminaRestoreUpdate()
+    {
+        if (!NovUtil.TimeCheck(lastAttackTime, staminaReloadCooldown)) return;
+
+        combatStamina = Mathf.Min(staminaMax, combatStamina + staminaPerSecond * Time.deltaTime);
+        master.Animator.SetFloat(NovUtil.CombatStaminaHash, combatStamina);
+    }
+
     public override void ActionDisturbed(CharacterAction disturber)
     {
         master.Animator.ResetTrigger(NovUtil.AttackHash);
@@ -208,7 +212,8 @@ public class PlayerCombat : PlayerAction
     }
     private void OnGUI()
     {
-        GUI.Label(new Rect(10, 310, 500, 80), string.Format("Combat Stamina: {0:F}", combatStamina), InternalSettings.DebugStyle);
+        if (Time.timeScale < 1f) return;
+        GUI.Label(new Rect(10, 70, 500, 80), string.Format("Combat Stamina: {0:F}", combatStamina), InternalSettings.DebugStyle);
 
     }
 }

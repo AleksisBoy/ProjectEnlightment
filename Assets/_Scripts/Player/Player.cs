@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using UnityEngine;
 
 public class Player : MonoBehaviour, IAnimationDispatch, IHealth
@@ -13,10 +14,12 @@ public class Player : MonoBehaviour, IAnimationDispatch, IHealth
     [SerializeField] private int maxHealingPotions = 3;
     [SerializeField] private KeyCode healKey = KeyCode.H;
 
-    private int money = 0;
-    private int healingPotions = 0;
-    private int manaPotions = 0;
-    private int abilityPoints = 0;
+    private Inventory inventory = null;
+
+    private const string ItemName_HPotion = "HealingPotion";
+    private const string ItemName_MPotion = "ManaPotion";
+    private const string ItemName_Money = "Money";
+    private const string ItemName_AP = "AbilityPoint";
 
     private int hp = 0;
     private bool dead = false;
@@ -50,9 +53,8 @@ public class Player : MonoBehaviour, IAnimationDispatch, IHealth
     }
     private void Start()
     {
-        Cursor.lockState = CursorLockMode.Locked;
-        Cursor.visible = false;
-
+        InternalSettings.EnableCursor(false);
+        inventory = InternalSettings.GetDefaultPlayerInventory();
         Revive();
     }
     private void Update()
@@ -98,23 +100,9 @@ public class Player : MonoBehaviour, IAnimationDispatch, IHealth
         actionList.Add(action);
         CharacterAction.SortActions<CharacterAction>(actionList, out actionList);
     }
-    public void AddPickup(PlayerItemPickup.Type type, int amount)
+    public void AddItem(EItem item, int amount)
     {
-        switch (type)
-        {
-            case PlayerItemPickup.Type.Money:
-                money += amount;
-                break;
-            case PlayerItemPickup.Type.HealingPotion:
-                healingPotions += amount;
-                break;
-            case PlayerItemPickup.Type.ManaPotion:
-                manaPotions += amount;
-                break;
-            case PlayerItemPickup.Type.AbilityPoint:
-                abilityPoints += amount;
-                break;
-        }
+        inventory.Add(item, amount);
     }
     public float GetDotProduct(Vector3 otherPosition)
     {
@@ -201,11 +189,11 @@ public class Player : MonoBehaviour, IAnimationDispatch, IHealth
     }
     private void HealWithPotion()
     {
-        if (healingPotions <= 0) return; // add feedback that not enough potions
+        if (inventory.HasItem(ItemName_HPotion, out Inventory.Item hpotion) || hpotion.amount <= 0) return; // add feedback that not enough potions
         if (hp >= maxHP) return; // add feedback that player is max hp
 
         hp = Mathf.Min(maxHP, hp + (int)(maxHP * InternalSettings.HealPotionStrength));
-        healingPotions--;
+        hpotion.amount--;
     }
 
     public void AssignOnHealthChanged(IHealth.OnHealthChanged action)
@@ -227,13 +215,15 @@ public class Player : MonoBehaviour, IAnimationDispatch, IHealth
     public Animator Animator => animator;
     public Rigidbody RB => rb;
     public Collider Collider => playerCollider;
+    public Inventory Inventory => inventory;
 
     private void OnGUI()
     {
-        GUI.Label(new Rect(10, 10, 500, 80), string.Format("Coins: {0}", money), InternalSettings.DebugStyle);
-        GUI.Label(new Rect(10, 70, 500, 80), string.Format("HP: {0}", hp), InternalSettings.DebugStyle);
-        GUI.Label(new Rect(10, 130, 500, 80), string.Format("HPotions: {0}", healingPotions), InternalSettings.DebugStyle);
-        GUI.Label(new Rect(10, 190, 500, 80), string.Format("MPotions: {0}", manaPotions), InternalSettings.DebugStyle);
-        GUI.Label(new Rect(10, 250, 500, 80), string.Format("APs: {0}", abilityPoints), InternalSettings.DebugStyle);
+        if (Time.timeScale < 1f) return;
+        GUI.Label(new Rect(10, 0, 500, 80), string.Format("HP: {0}", hp), InternalSettings.DebugStyle);
+        //GUI.Label(new Rect(10, 10, 500, 80), string.Format("Coins: {0}", money.amount), InternalSettings.DebugStyle);
+        //GUI.Label(new Rect(10, 130, 500, 80), string.Format("HPotions: {0}", healingPotions.amount), InternalSettings.DebugStyle);
+        //GUI.Label(new Rect(10, 190, 500, 80), string.Format("MPotions: {0}", manaPotions.amount), InternalSettings.DebugStyle);
+        //GUI.Label(new Rect(10, 250, 500, 80), string.Format("APs: {0}", abilityPoints.amount), InternalSettings.DebugStyle);
     }
 }
