@@ -13,6 +13,7 @@ public static class NovUtil
     public static readonly int GetHitHash = Animator.StringToHash("GetHit");
     public static readonly int DiedHash = Animator.StringToHash("Died");
     public static readonly int CombatStaminaHash = Animator.StringToHash("CombatStamina");
+    public static readonly int SheathedHash = Animator.StringToHash("Sheathed");
 
     public static T GetClosestFromArray<T>(Vector3 position, in T[] list) where T : Component
     {
@@ -101,5 +102,19 @@ public static class NovUtil
     public static Vector3 VectorAbs(Vector3 vec)
     {
         return new Vector3(Mathf.Abs(vec.x), Mathf.Abs(vec.y), Mathf.Abs(vec.z));
+    }
+    public static bool TimerCheck(ref float time, float timer, float incrementer,  bool resetOnTrue = true)
+    {
+        time += incrementer;
+        if (time >= timer)
+        {
+            if (resetOnTrue) time = 0f;
+            return true;
+        }
+        return false;
+    }
+    public static bool TimeCheck(float lastTime, float timer)
+    {
+        return Time.time - lastTime >= timer;
     }
 }

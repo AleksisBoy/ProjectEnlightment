@@ -1,17 +1,18 @@
 using System.Collections.Generic;
 using UnityEngine;
-using static UnityEditor.ShaderGraph.Internal.KeywordDependentCollection;
 
 public class PlayerCombat : PlayerAction
 {
     [Header("Combat")]
     [SerializeField] private KeyCode attackActionKey;
     [SerializeField] private KeyCode blockActionKey;
+    [SerializeField] private KeyCode sheatheActionKey;
     [SerializeField] private float attackDistance = 0.3f;
     [SerializeField] private int damage = 25;
     [SerializeField] private Vector3 attackOffset = new Vector3(0, 1f, 0);
     [SerializeField] private Vector3 halfExtents = new Vector3(0.1f, 0.5f, 0.1f);
     [SerializeField] private float frontAssassinationMinDot = 0.5f;
+    [SerializeField] private float sheathTimer = 0.5f;
 
     [SerializeField] private float staminaPerSecond = 0.1f;
     [SerializeField] private float staminaReloadCooldown = 2f;
@@ -27,6 +28,10 @@ public class PlayerCombat : PlayerAction
     private float combatStamina = 0f;
 
     private bool isBlocking = false;
+
+    private bool sheathed = false;
+    private float sheathInputTime = 0f;
+    private bool sheathInputReset = true;
     private void Start()
     {
         combatStamina = 1f;
@@ -36,8 +41,10 @@ public class PlayerCombat : PlayerAction
     {
         bool attackActionKeyDown = Input.GetKeyDown(attackActionKey);
         bool blockActionKeyHold = Input.GetKey(blockActionKey);
+        bool sheatheActionKeyHold = Input.GetKey(sheatheActionKey);
+        bool sheatheActionKeyUp = Input.GetKeyUp(sheatheActionKey);
         
-        if (attackActionKeyDown && !isBlocking)
+        if (attackActionKeyDown && !isBlocking && sheathed)
         {
             AttackInput();
             blockOther = true;
@@ -48,19 +55,20 @@ public class PlayerCombat : PlayerAction
         }
         else
         {
-            if (blockActionKeyHold)
+            if (blockActionKeyHold && sheathed)
             {
                 isBlocking = true;
             }
             else
             {
                 isBlocking = false;
+                SheatheInput(sheatheActionKeyHold, sheatheActionKeyUp);
             }
             master.Animator.SetBool(NovUtil.IsBlockingHash, isBlocking);
             blockOther = isBlocking;
         }
 
-        if (Time.time - lastAttackTime > staminaReloadCooldown)
+        if (NovUtil.TimeCheck(lastAttackTime, staminaReloadCooldown))
         {
             combatStamina = Mathf.Min(staminaMax, combatStamina + staminaPerSecond * Time.deltaTime);
             master.Animator.SetFloat(NovUtil.CombatStaminaHash, combatStamina);
@@ -84,6 +92,21 @@ public class PlayerCombat : PlayerAction
         queueWindowOpen = false;
         queueAttack = false;
         master.Animator.SetTrigger(NovUtil.AttackHash);
+    }
+    private void SheatheInput(bool sheatheActionKeyHold, bool sheatheActionKeyUp)
+    {
+        if (sheatheActionKeyUp) { sheathInputReset = true; sheathInputTime = 0f; return; }
+        if (!sheathInputReset) return;
+        if (!sheatheActionKeyHold) return;
+        if (!NovUtil.TimerCheck(ref sheathInputTime, sheathTimer, Time.deltaTime)) return;
+
+        Sheathe();
+    }
+    private void Sheathe()
+    {
+        sheathed = !sheathed;
+        sheathInputReset = false;
+        master.Animator.SetBool(NovUtil.SheathedHash, sheathed);
     }
     public override void ActionDisturbed(CharacterAction disturber)
     {
