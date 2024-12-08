@@ -87,7 +87,7 @@ MonoBehaviour:
   maxHP: 100
   reviveTime: 2
   maxHealingPotions: 3
-  healKey: 104
+  healKey: 114
 --- !u!114 &8870685154985295319
 MonoBehaviour:
   m_ObjectHideFlags: 0

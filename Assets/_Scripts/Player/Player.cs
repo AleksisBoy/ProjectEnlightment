@@ -105,6 +105,7 @@ public class Player : MonoBehaviour, IAnimationDispatch, IHealth
     public void AddItem(EItem item, int amount)
     {
         inventory.Add(item, amount);
+        UI.ItemPickedUp(item, amount);
     }
     public float GetDotProduct(Vector3 otherPosition)
     {

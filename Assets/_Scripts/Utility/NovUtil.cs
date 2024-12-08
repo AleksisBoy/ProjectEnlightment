@@ -103,12 +103,22 @@ public static class NovUtil
     {
         return new Vector3(Mathf.Abs(vec.x), Mathf.Abs(vec.y), Mathf.Abs(vec.z));
     }
-    public static bool TimerCheck(ref float time, float timer, float incrementer,  bool resetOnTrue = true)
+    public static bool TimerCheck(ref float time, in float timer, in float incrementer,  bool resetOnTrue = true)
     {
         time += incrementer;
         if (time >= timer)
         {
             if (resetOnTrue) time = 0f;
+            return true;
+        }
+        return false;
+    }
+    public static bool CountdownCheck(ref float time, in float timer, in float decrementer,  bool resetOnTrue = true)
+    {
+        time -= decrementer;
+        if (time <= 0f)
+        {
+            if (resetOnTrue) time = timer;
             return true;
         }
         return false;

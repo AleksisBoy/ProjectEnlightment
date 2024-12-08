@@ -61,6 +61,7 @@ public class PlayerPickupInteraction : PlayerAction
     {
         currentHighlighted.HighlightEnd();
         currentHighlighted.Pickup(master);
+        ResetCurrentHighlighted();
     }
     private void OnDrawGizmosSelected()
     {
