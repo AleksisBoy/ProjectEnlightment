@@ -19,7 +19,6 @@ public class VerticalHighlightGrid : MonoBehaviour
     }
     private void UpdateGrid()
     {
-        Debug.Log( children.Count + " upd " + Time.time);
         for (int i = 0; i < children.Count; i++)
         {
             float offsetX = 0;

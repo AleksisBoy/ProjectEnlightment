@@ -5,33 +5,44 @@ public class Inventory
 {
     private List<Item> items = new List<Item>();
 
-    public void Add(EItem item, int amount)
+    public void Add(in EItem item, in int amount)
     {
         if (HasItem(item, out Item invItem))
         {
-            AddAmount(invItem, amount);
+            AddAmount(ref invItem, amount);
         }
         else
         {
             items.Add(new Item(item, amount));
         }
     }
-    public void Decrease(EItem item, int amount)
+    public void Decrease(in EItem item, in int amount)
     {
         if (!HasItem(item, out Item invItem)) return;
 
         invItem.amount -= amount;
-        if (invItem.amount <= 0) Remove(invItem);
+        if (invItem.amount <= 0) Remove(ref invItem);
     }
-    private void AddAmount(Item item, int amount)
+    private void AddAmount(ref Item item, in int amount)
     {
         item.amount += amount;
     }
-    private void Remove(Item invItem)
+    private void Remove(ref Item invItem)
     {
         items.Remove(invItem);
     }
-    public bool HasItem(EItem item, out Item invItem)
+    public bool HasItem(in Item item)
+    {
+        foreach (Item i in items)
+        {
+            if (i == item)
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+    public bool HasItem(in EItem item, out Item invItem)
     {
         foreach (Item i in items)
         {
@@ -41,10 +52,10 @@ public class Inventory
                 return true;
             }
         }
-        invItem = new Item();
+        invItem = null;
         return false;
     }
-    public bool HasItem(string itemName, out Item invItem)
+    public bool HasItem(in string itemName, out Item invItem)
     {
         foreach (Item i in items)
         {
@@ -54,13 +65,13 @@ public class Inventory
                 return true;
             }
         }
-        invItem = new Item();
+        invItem = null;
         return false;
     }
     public int ItemCount => items.Count;
     public List<Item> Items => items;
     [Serializable]
-    public struct Item
+    public class Item
     {
         public EItem get;
         public int amount;  

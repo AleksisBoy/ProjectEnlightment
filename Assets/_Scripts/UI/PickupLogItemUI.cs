@@ -35,7 +35,6 @@ public class PickupLogItemUI : MonoBehaviour
     }
     private void OnRectTransformDimensionsChange()
     {
-        if (lastSize != RT.sizeDelta) Debug.Log("Changed " + itemName.text);
         float changeX = RT.sizeDelta.x / lastSize.x;
         float changeY = RT.sizeDelta.y / lastSize.y;
 

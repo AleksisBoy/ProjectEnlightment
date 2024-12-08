@@ -4653,7 +4653,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2678158046134016677, guid: df5afbe55f88131408c67b317e84b1f2, type: 3}
       propertyPath: highlightScaleModifier
-      value: 1.1
+      value: 1.18
       objectReference: {fileID: 0}
     - target: {fileID: 3287201105041187309, guid: df5afbe55f88131408c67b317e84b1f2, type: 3}
       propertyPath: m_AnchorMax.y

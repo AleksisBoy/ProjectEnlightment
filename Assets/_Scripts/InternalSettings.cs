@@ -1,4 +1,4 @@
-using System;
+using TMPro;
 using UnityEngine;
 
 public class InternalSettings : MonoBehaviour
@@ -18,6 +18,7 @@ public class InternalSettings : MonoBehaviour
     [SerializeField] private Color selectedIconColor = Color.white;
     public static InternalSettings Get { get; private set; }
 
+    public const string ASCII_TABLE = "!\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}";
     public static GUIStyle DebugStyle => Get.debugStyle;
     public static float HealPotionStrength => Get.healPotionStrength;
     public static LayerMask CharacterMask => Get.characterMask;
@@ -29,6 +30,8 @@ public class InternalSettings : MonoBehaviour
     {
         if (Get == null) Get = this;
         else if (Get != this) { Destroy(gameObject); return; }
+
+        InitTMP();
     }
     public static Inventory GetDefaultPlayerInventory()
     {
@@ -49,5 +52,12 @@ public class InternalSettings : MonoBehaviour
     public static UserInterface SpawnUserInterface()
     {
         return Instantiate(Get.userInterfacePrefab);
+    }
+    private void InitTMP()
+    {
+        TextMeshProUGUI initText = gameObject.AddComponent<TextMeshProUGUI>();
+        initText.text = InternalSettings.ASCII_TABLE;
+        initText.color = new Color(0, 0, 0, 0);
+        Destroy(initText, 0.1f);
     }
 }
