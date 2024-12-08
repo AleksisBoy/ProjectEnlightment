@@ -1,4 +1,3 @@
-using System.Data;
 using UnityEngine;
 using Unity.Cinemachine;
 
@@ -6,11 +5,14 @@ public class PlayerCamera : PlayerAction
 {
     [Header("Camera")]
     [SerializeField] private CinemachineCamera cineCamera = null;
-    [SerializeField] private CinemachinePanTilt panTilt = null;
-    [SerializeField] private CinemachineInputAxisController axisController = null;
-    [SerializeField] private Vector3 cameraOffset = Vector3.zero;
-    [SerializeField] private float rotationSpeed = 90f;
-    [SerializeField] private float rotationLimit = 90f;
+    [SerializeField] private Vector2 noiseAmplitudeRange = new Vector2(0f, 2f);
+    [SerializeField] private Vector2 noiseFrequencyRange = new Vector2(0f, 2f);
+    [Range(0f, 1f)]
+    [SerializeField] private float minNoise = 0.1f;
+
+    private CinemachinePanTilt panTilt = null;
+    private CinemachineInputAxisController axisController = null;
+    private CinemachineBasicMultiChannelPerlin noise = null;
 
     public CinemachineCamera Get => cineCamera;
 
@@ -37,9 +39,11 @@ public class PlayerCamera : PlayerAction
     {
         if (cineCamera == null) throw new System.Exception("NO CAMERA");
 
-        currentRotation = cineCamera.transform.rotation;
-        currentRotationFlat = Quaternion.Euler(0f, currentRotation.y, currentRotation.z);
-        //cineCamera.transform.position = transform.position + cameraOffset;
+        panTilt = cineCamera.GetComponent<CinemachinePanTilt>();
+        axisController = cineCamera.GetComponent<CinemachineInputAxisController>();
+        noise = cineCamera.GetComponent<CinemachineBasicMultiChannelPerlin>();
+
+        SetNoise(0.1f);
     }
 
     public override void ActionUpdate(out bool blockOther)
@@ -49,7 +53,6 @@ public class PlayerCamera : PlayerAction
         panTilt.enabled = true;
         axisController.enabled = true;
         master.Mesh.transform.rotation = cineCamera.transform.rotation;
-        //CalculateCurrentRotation(GetMouseInputVector());
     }
     public override bool ActionBlocked(CharacterAction blocker)
     {
@@ -58,43 +61,11 @@ public class PlayerCamera : PlayerAction
         cineCamera.transform.rotation = master.Mesh.transform.rotation;
         return true;
     }
-    private void LateUpdate()
+    public void SetNoise(float weight)
     {
-        if (!Update) return;
-
-        //Quaternion rot = cineCamera.transform.rotation;
-        Quaternion rot = Quaternion.Euler(new Vector3(0f, cineCamera.transform.eulerAngles.y, cineCamera.transform.eulerAngles.z));
-        //master.RB.MoveRotation(Quaternion.Slerp(master.RB.rotation, rot, rotationSpeed * Time.deltaTime));
-    }
-    private void CalculateCurrentRotation(Vector2 input)
-    {
-        Vector3 rotationOffset = new Vector3(-input.y * rotationSpeed * Time.deltaTime,
-                    input.x * rotationSpeed * Time.deltaTime, 0f);
-
-        Vector3 euler = cineCamera.transform.eulerAngles + rotationOffset;
-
-        if (euler.x > rotationLimit && euler.x < 180f)
-        {
-            euler.x = rotationLimit;
-        }
-        else if (euler.x < 360f - rotationLimit && euler.x >= 180f)
-        {
-            euler.x = 360f - rotationLimit;
-        }
-
-        cineCamera.transform.eulerAngles = euler;
-        currentRotation = cineCamera.transform.rotation;
-        //currentRotation = Quaternion.Euler(euler);
-        currentRotationFlat = Quaternion.Euler(new Vector3(0f, euler.y, euler.z));
-    }
-    private static Vector2 GetMouseInputVector()
-    {
-        float mouseX = Input.GetAxis("Mouse X");
-        float mouseY = Input.GetAxis("Mouse Y");
-
-        Vector2 inputVector = new Vector2(mouseX, mouseY);
-
-        return inputVector;
+        weight = Mathf.Max(minNoise, Mathf.Clamp01(weight));
+        noise.AmplitudeGain = Mathf.Lerp(noiseAmplitudeRange.x, noiseAmplitudeRange.y, weight);
+        noise.FrequencyGain = Mathf.Lerp(noiseFrequencyRange.x, noiseFrequencyRange.y, weight);
     }
     public void SetPan(float pan)
     {

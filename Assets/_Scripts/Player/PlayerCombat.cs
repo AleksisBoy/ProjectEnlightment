@@ -110,6 +110,7 @@ public class PlayerCombat : PlayerAction
 
         combatStamina = Mathf.Min(staminaMax, combatStamina + staminaPerSecond * Time.deltaTime);
         master.Animator.SetFloat(NovUtil.CombatStaminaHash, combatStamina);
+        master.PlayerCamera.SetNoise((staminaMax - combatStamina) / (staminaMax - staminaMin));
     }
 
     public override void ActionDisturbed(CharacterAction disturber)
@@ -137,6 +138,7 @@ public class PlayerCombat : PlayerAction
     {
         combatStamina = Mathf.Max(staminaMin, combatStamina - staminaPerAttack);
         master.Animator.SetFloat(NovUtil.CombatStaminaHash, combatStamina);
+        master.PlayerCamera.SetNoise((staminaMax - combatStamina) / (staminaMax - staminaMin));
 
         if (!master.BoxCastForward(attackDistance, halfExtents,
             InternalSettings.CharacterMask, out Collider[] hits)) return;
@@ -213,7 +215,7 @@ public class PlayerCombat : PlayerAction
     private void OnGUI()
     {
         if (Time.timeScale < 1f) return;
-        GUI.Label(new Rect(10, 70, 500, 80), string.Format("Combat Stamina: {0:F}", combatStamina), InternalSettings.DebugStyle);
+        //GUI.Label(new Rect(10, 70, 500, 80), string.Format("Combat Stamina: {0:F}", combatStamina), InternalSettings.DebugStyle);
 
     }
 }

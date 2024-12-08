@@ -44,6 +44,7 @@ public class PlayerWeaponWheel : PlayerAction
         weaponWheel.gameObject.SetActive(true);
         Time.timeScale = timeScaleWhileOpen;
         InternalSettings.EnableCursor(true);
+        master.UI.AddCrosshair(Crosshair.Type.None);
     }
     private void CloseWeaponWheel()
     {
@@ -51,5 +52,6 @@ public class PlayerWeaponWheel : PlayerAction
         weaponWheel.gameObject.SetActive(false);
         Time.timeScale = 1.0f;
         InternalSettings.EnableCursor(false);
+        master.UI.RemoveCrosshair(Crosshair.Type.None);
     }
 }

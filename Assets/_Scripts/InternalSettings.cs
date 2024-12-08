@@ -13,6 +13,7 @@ public class InternalSettings : MonoBehaviour
     [Header("Items")]
     [SerializeField] private Inventory.Item[] playerDefaultItems = null;
     [Header("UI")]
+    [SerializeField] private UserInterface userInterfacePrefab = null;
     [SerializeField] private Color defaultIconColor = Color.white;
     [SerializeField] private Color selectedIconColor = Color.white;
     public static InternalSettings Get { get; private set; }
@@ -44,5 +45,9 @@ public class InternalSettings : MonoBehaviour
     {
         Cursor.lockState = state ? CursorLockMode.None : CursorLockMode.Locked;
         Cursor.visible = state;
+    }
+    public static UserInterface SpawnUserInterface()
+    {
+        return Instantiate(Get.userInterfacePrefab);
     }
 }

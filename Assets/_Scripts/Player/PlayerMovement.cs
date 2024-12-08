@@ -47,7 +47,7 @@ public class PlayerMovement : PlayerAction
             maxSpeed *= crouchSpeedModifer;
         }
 
-        Move(GetMoveInputVector(), speed, maxSpeed, true, true, jumpKeyDown);
+        Move(Player.GetMoveInputVector(), speed, maxSpeed, true, true, jumpKeyDown);
     }
     public override bool ActionBlocked(CharacterAction blocker) 
     {
@@ -59,7 +59,7 @@ public class PlayerMovement : PlayerAction
             bool crouchKeyDown = Input.GetKeyDown(crouchKey);
             if (crouchKeyDown) Crouch();
 
-            Move(GetMoveInputVector(), walkSpeed / 1.25f, sprintSpeed, true, true, false);
+            Move(Player.GetMoveInputVector(), walkSpeed / 1.25f, sprintSpeed, true, true, false);
             return true;
         }
 
@@ -164,19 +164,6 @@ public class PlayerMovement : PlayerAction
     {
         velocity.y += jumpForce;
         //master.Animator.SetTrigger(NovUtil.JumpHash);
-    }
-    private static Vector3 GetMoveInputVector()
-    {
-        float horizontal = Input.GetAxisRaw("Horizontal");
-        float vertical = Input.GetAxisRaw("Vertical");
-
-        Vector3 inputVector = new Vector3(horizontal, 0f, vertical);
-        if (horizontal != 0 && vertical != 0)
-        {
-            inputVector *= 0.71f;
-        }
-
-        return inputVector;
     }
     private void OnDrawGizmosSelected()
     {

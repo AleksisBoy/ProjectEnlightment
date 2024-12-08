@@ -47,6 +47,7 @@ public class PlayerPickupInteraction : PlayerAction
         
         currentHighlighted.HighlightEnd();
         currentHighlighted = null;
+        master.UI.RemoveCrosshair(Crosshair.Type.Grab);
     }
     private void AssignCurrentHighlighted(PickupObject pickup)
     {
@@ -54,6 +55,7 @@ public class PlayerPickupInteraction : PlayerAction
 
         currentHighlighted = pickup;
         currentHighlighted.HighlightBegin();
+        master.UI.AddCrosshair(Crosshair.Type.Grab);
     }
     private void PickupCurrentHighlighted()
     {

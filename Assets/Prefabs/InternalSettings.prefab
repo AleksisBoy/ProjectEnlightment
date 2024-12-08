@@ -116,3 +116,16 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 1152
   outlineLayer: 9
+  ragdollLayer: 11
+  playerDefaultItems:
+  - get: {fileID: 11400000, guid: 71c352a71dc6e1449a1254b32eba65ac, type: 2}
+    amount: 1
+  - get: {fileID: 11400000, guid: f2b29e39586db6a4cbe19f33b70080d2, type: 2}
+    amount: 1
+  - get: {fileID: 11400000, guid: b82195ff4be9723458eb2e99902e8cd0, type: 2}
+    amount: 0
+  - get: {fileID: 11400000, guid: 88488570e5f74034b9855c5bc0610519, type: 2}
+    amount: 0
+  userInterfacePrefab: {fileID: 2555585968260613193, guid: df5afbe55f88131408c67b317e84b1f2, type: 3}
+  defaultIconColor: {r: 1, g: 1, b: 1, a: 1}
+  selectedIconColor: {r: 0.847, g: 1, b: 1, a: 0.9254902}

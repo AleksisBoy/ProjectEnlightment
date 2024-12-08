@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using UnityEngine;
 
 public class Player : MonoBehaviour, IAnimationDispatch, IHealth
@@ -7,6 +6,7 @@ public class Player : MonoBehaviour, IAnimationDispatch, IHealth
     [SerializeField] private Animator animator = null;
     [SerializeField] private Collider playerCollider = null;
     [SerializeField] private GameObject playerMesh = null;
+    [SerializeField] private UserInterface userInterface = null;
     [Header("Health")]
     [SerializeField] private int maxHP = 100;
     [SerializeField] private float reviveTime = 2f;
@@ -36,7 +36,7 @@ public class Player : MonoBehaviour, IAnimationDispatch, IHealth
     private void Awake()
     {
         rb = GetComponent<Rigidbody>();
-        foreach(CharacterAction action in GetComponents<CharacterAction>())
+        foreach (CharacterAction action in GetComponents<CharacterAction>())
         {
             actionList.Add(action);
             action.ActionSetup(this);
@@ -55,6 +55,8 @@ public class Player : MonoBehaviour, IAnimationDispatch, IHealth
     {
         InternalSettings.EnableCursor(false);
         inventory = InternalSettings.GetDefaultPlayerInventory();
+        if (!userInterface) userInterface = InternalSettings.SpawnUserInterface();
+        userInterface.SetPlayer(this);
         Revive();
     }
     private void Update()
@@ -76,7 +78,7 @@ public class Player : MonoBehaviour, IAnimationDispatch, IHealth
 
         bool block = false;
         CharacterAction blocker = null;
-        foreach(CharacterAction action in actionList)
+        foreach (CharacterAction action in actionList)
         {
             if (block)
             {
@@ -117,16 +119,16 @@ public class Player : MonoBehaviour, IAnimationDispatch, IHealth
             PlayerCamera.Forward,
             out hit,
             distance,
-            mask, 
+            mask,
             query);
     }
     public bool BoxCastForward(float distance, Vector3 halfExtents, LayerMask mask, out Collider[] hits, QueryTriggerInteraction query = QueryTriggerInteraction.Ignore)
     {
         hits = Physics.OverlapBox(
             (PlayerCamera.Position + playerCamera.Position + (playerCamera.Forward * distance)) / 2f,
-            halfExtents, 
+            halfExtents,
             playerCamera.Rotation,
-            mask, 
+            mask,
             query);
 
         /*
@@ -142,10 +144,33 @@ public class Player : MonoBehaviour, IAnimationDispatch, IHealth
 
         return hits.Length > 0;
     }
+    // Input
+    public static Vector3 GetMoveInputVector()
+    {
+        float horizontal = Input.GetAxisRaw("Horizontal");
+        float vertical = Input.GetAxisRaw("Vertical");
+
+        Vector3 inputVector = new Vector3(horizontal, 0f, vertical);
+        if (horizontal != 0 && vertical != 0)
+        {
+            inputVector *= 0.71f;
+        }
+
+        return inputVector;
+    }
+    public static Vector2 GetMouseInputVector()
+    {
+        float mouseX = Input.GetAxis("Mouse X");
+        float mouseY = Input.GetAxis("Mouse Y");
+
+        Vector2 inputVector = new Vector2(mouseX, mouseY);
+
+        return inputVector;
+    }
     // IAnimationDispatch
     public void CallAnimationEvent(string animEvent)
     {
-        foreach(CharacterAction action in actionList)
+        foreach (CharacterAction action in actionList)
         {
             action.CallAnimationEvent(animEvent);
         }
@@ -173,7 +198,7 @@ public class Player : MonoBehaviour, IAnimationDispatch, IHealth
     }
     private void ReviveProcess()
     {
-        if(Time.time - deathTime > reviveTime)
+        if (Time.time - deathTime > reviveTime)
         {
             Revive();
         }
@@ -193,6 +218,7 @@ public class Player : MonoBehaviour, IAnimationDispatch, IHealth
         if (hp >= maxHP) return; // add feedback that player is max hp
 
         hp = Mathf.Min(maxHP, hp + (int)(maxHP * InternalSettings.HealPotionStrength));
+        onHealthChanged?.Invoke(hp, maxHP);
         hpotion.amount--;
     }
 
@@ -216,14 +242,5 @@ public class Player : MonoBehaviour, IAnimationDispatch, IHealth
     public Rigidbody RB => rb;
     public Collider Collider => playerCollider;
     public Inventory Inventory => inventory;
-
-    private void OnGUI()
-    {
-        if (Time.timeScale < 1f) return;
-        GUI.Label(new Rect(10, 0, 500, 80), string.Format("HP: {0}", hp), InternalSettings.DebugStyle);
-        //GUI.Label(new Rect(10, 10, 500, 80), string.Format("Coins: {0}", money.amount), InternalSettings.DebugStyle);
-        //GUI.Label(new Rect(10, 130, 500, 80), string.Format("HPotions: {0}", healingPotions.amount), InternalSettings.DebugStyle);
-        //GUI.Label(new Rect(10, 190, 500, 80), string.Format("MPotions: {0}", manaPotions.amount), InternalSettings.DebugStyle);
-        //GUI.Label(new Rect(10, 250, 500, 80), string.Format("APs: {0}", abilityPoints.amount), InternalSettings.DebugStyle);
-    }
+    public UserInterface UI => userInterface;
 }
