@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2f79299f233f3334bb5ca45ae24f286e, type: 3}
+  m_Name: Sword
+  m_EditorClassIdentifier: 
+  itemName: Sword
+  description: Sword
+  unique: 1
+  maxStack: 1
+  iconSprite: {fileID: 21300000, guid: b2d1785a160a47c46845b034c17b4258, type: 3}
+  rightHanded: 1
+  meshPrefab: {fileID: 8295139207976453238, guid: 34a37f5629823994bb6534993b7dcc7b, type: 3}
+  handTransformRotation: {x: 339.37204, y: 270.46936, z: 258.54376}
+  maxDamage: 80
+  maxDistance: 10

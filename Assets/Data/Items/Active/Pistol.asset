@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6a9f6fb71363e7446a8c138ef0e8917a, type: 3}
+  m_Name: Pistol
+  m_EditorClassIdentifier: 
+  itemName: Pistol
+  description: 'pistol
+
+'
+  unique: 1
+  maxStack: 1
+  iconSprite: {fileID: 21300000, guid: 1ccb6488928865843a767af447faf03f, type: 3}
+  rightHanded: 0
+  meshPrefab: {fileID: 177453769048642125, guid: c13354e1c1a4dc84f8ba14dc4e07fff5, type: 3}
+  handTransformRotation: {x: 311.39728, y: 293.31012, z: 13.010697}
+  maxDamage: 80
+  maxDistance: 10
+  shootCooldown: 0.7
+  halfExtents: {x: 0.1, y: 0.1, z: 0.05}

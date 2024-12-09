@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 
@@ -12,6 +13,7 @@ public class InternalSettings : MonoBehaviour
     [SerializeField] private int ragdollLayer = 11;
     [Header("Items")]
     [SerializeField] private Inventory.Item[] playerDefaultItems = null;
+    [SerializeField] private ItemActive swordItem = null;
     [Header("UI")]
     [SerializeField] private UserInterface userInterfacePrefab = null;
     [SerializeField] private Color defaultIconColor = Color.white;
@@ -26,6 +28,9 @@ public class InternalSettings : MonoBehaviour
     public static int RagdollLayer => Get.ragdollLayer;
     public static Color SelectedIconColor => Get.selectedIconColor;
     public static Color DefaultIconColor => Get.defaultIconColor;
+    public static ItemActive SwordItem => Get.swordItem;
+
+    private Dictionary<ItemActive, GameObject> storedPrefabs = new Dictionary<ItemActive, GameObject>();
     private void Awake()
     {
         if (Get == null) Get = this;
@@ -52,6 +57,17 @@ public class InternalSettings : MonoBehaviour
     public static UserInterface SpawnUserInterface()
     {
         return Instantiate(Get.userInterfacePrefab);
+    }
+    public static GameObject GetStoredPrefab(ItemActive item)
+    {
+        if (!Get.storedPrefabs.ContainsKey(item)) return null;
+        return Get.storedPrefabs[item];
+    }
+    public static GameObject SpawnStorePrefab(ItemActive item, Transform parent)
+    {
+        GameObject prefab = Instantiate(item.MeshPrefab, parent);
+        Get.storedPrefabs.Add(item, prefab);
+        return prefab;
     }
     private void InitTMP()
     {

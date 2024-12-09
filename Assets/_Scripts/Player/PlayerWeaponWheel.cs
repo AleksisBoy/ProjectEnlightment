@@ -10,10 +10,11 @@ public class PlayerWeaponWheel : PlayerAction
 
     private bool wheelActive = false;
     private float inputHoldTime = 0f;
-    private void Start()
+    public override void Init(params object[] other)
     {
+        base.Init(other);
         weaponWheel.Init();
-        CloseWeaponWheel();
+        CloseWeaponWheel(); // to remove
     }
     public override void ActionUpdate(out bool blockOther)
     {
@@ -40,7 +41,7 @@ public class PlayerWeaponWheel : PlayerAction
     private void OpenWeaponWheel()
     {
         wheelActive = true;
-        weaponWheel.SetInventory(master.Inventory);
+        weaponWheel.SetInventory(master.Equipment.Inventory);
         weaponWheel.gameObject.SetActive(true);
         Time.timeScale = timeScaleWhileOpen;
         InternalSettings.EnableCursor(true);
@@ -48,6 +49,11 @@ public class PlayerWeaponWheel : PlayerAction
     }
     private void CloseWeaponWheel()
     {
+        ItemActive itemActive = ItemIconUI.Selected?.Item.get as ItemActive;
+        if (itemActive)
+        {
+            master.Equipment.EquipToggle(itemActive);
+        }
         wheelActive = false;
         weaponWheel.gameObject.SetActive(false);
         Time.timeScale = 1.0f;

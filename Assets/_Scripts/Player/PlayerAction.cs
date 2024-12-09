@@ -3,7 +3,7 @@ using UnityEngine;
 public class PlayerAction : CharacterAction
 {
     protected Player master;
-    public override void ActionSetup(params object[] objects)
+    public override void Init(params object[] objects)
     {
         foreach (var obj in objects)
         {
@@ -12,6 +12,6 @@ public class PlayerAction : CharacterAction
                 master = (Player)obj;
             }
         }
-        base.ActionSetup(objects);
+        base.Init(objects);
     }
 }

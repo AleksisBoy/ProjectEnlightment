@@ -15,7 +15,6 @@ public class PlayerMovement : PlayerAction
     [SerializeField] private Vector3 groundBoxCenterOffset = new Vector3(0, 0.3f, 0f);
     [SerializeField] private Vector3 groundBoxHalfExtents = new Vector3(0.4f, 0.05f, 0.4f);
     [SerializeField] private float groundCheckDistance = 0.4f;
-    [SerializeField] private Transform cameraTransform = null;
     [SerializeField] private KeyCode jumpKey = KeyCode.Space;
     [SerializeField] private KeyCode sprintKey = KeyCode.LeftShift;
     [SerializeField] private KeyCode crouchKey = KeyCode.LeftControl;
@@ -92,7 +91,7 @@ public class PlayerMovement : PlayerAction
     {
         float speed = baseSpeed;
         //Quaternion cameraLookRotation = master.PlayerCamera.CurrentRotationFlat;
-        Quaternion cameraLookRotation = Quaternion.LookRotation(new Vector3(cameraTransform.forward.x, 0f, cameraTransform.forward.z), Vector3.up);
+        Quaternion cameraLookRotation = Quaternion.LookRotation(new Vector3(master.Camera.Forward.x, 0f, master.Camera.Forward.z), Vector3.up);
         Vector3 velocity = cameraLookRotation * inputVector;
         Quaternion playerLookRotation = cameraLookRotation;
         //Quaternion playerLookRotation = Quaternion.Slerp(master.RB.rotation, cameraLookRotation, rotationSpeed * Time.deltaTime);
@@ -103,7 +102,7 @@ public class PlayerMovement : PlayerAction
 
         if (setRotation)
         {
-            Quaternion rot = Quaternion.Euler(new Vector3(master.PlayerCamera.transform.eulerAngles.x, master.PlayerCamera.transform.eulerAngles.y, 0f));
+            Quaternion rot = Quaternion.Euler(new Vector3(master.Camera.transform.eulerAngles.x, master.Camera.transform.eulerAngles.y, 0f));
 
             //master.Mesh.transform.localRotation = rot;
             //master.Mesh.transform.rotation = playerLookRotation;

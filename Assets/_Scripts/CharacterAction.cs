@@ -10,7 +10,7 @@ public class CharacterAction : MonoBehaviour, IAnimationDispatch
     protected bool isSetup = false;
     public int Priority => priority;
     public bool Update => update;
-    public virtual void ActionSetup(params object[] objects)
+    public virtual void Init(params object[] objects)
     {
         isSetup = true;
     }

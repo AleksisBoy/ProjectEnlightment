@@ -52,7 +52,7 @@ public class WeaponWheel : MonoBehaviour
             }
             icon.SetItem(items[i]);
         }
-
+        selectedItemInfo.text = string.Empty;
         grid.SetGrid();
     }
     public void SetInventory(Inventory inventory)

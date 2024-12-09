@@ -1,8 +1,21 @@
 ﻿
 using UnityEngine;
 
-[CreateAssetMenu(menuName = "Enlightenment/New Active Item")]
-public class ItemActive : EItem
+public abstract class ItemActive : EItem
 {
+    [Header("General")]
+    [SerializeField] private bool rightHanded = true;
+    [SerializeField] private GameObject meshPrefab = null;
+    [SerializeField] private Vector3 handTransformRotation = Vector3.zero;
 
+    protected IActor actor;
+    public abstract void OnEquip(IActor actor);
+    public abstract void OnDequip();
+    public abstract void OnInputDown();
+    public abstract void OnInputHold();
+    public abstract void OnInputUp();
+
+    public bool RightHanded => rightHanded;
+    public GameObject MeshPrefab => meshPrefab;
+    public Vector3 HandTransformRotation => handTransformRotation;
 }

@@ -44,8 +44,8 @@ public class PlayerAnimation : PlayerAction
             case "PlayerAnimationFinish":
                 animating = false;
                 master.RB.isKinematic = false;
-                master.PlayerCamera.SetPan(master.Mesh.transform.eulerAngles.y);
-                master.PlayerCamera.SetTilt(master.Mesh.transform.eulerAngles.x);
+                master.Camera.SetPan(master.Mesh.transform.eulerAngles.y);
+                master.Camera.SetTilt(master.Mesh.transform.eulerAngles.x);
                 break;
         }
     }

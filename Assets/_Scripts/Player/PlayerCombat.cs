@@ -4,9 +4,10 @@ using UnityEngine;
 public class PlayerCombat : PlayerAction
 {
     [Header("Combat")]
-    [SerializeField] private KeyCode attackActionKey;
-    [SerializeField] private KeyCode blockActionKey;
-    [SerializeField] private KeyCode sheatheActionKey;
+    [SerializeField] private KeyCode rightHandKey = KeyCode.Mouse0;
+    [SerializeField] private KeyCode leftHandKey = KeyCode.Mouse1;
+    [SerializeField] private KeyCode blockActionKey = KeyCode.LeftControl;
+    [SerializeField] private KeyCode sheatheActionKey = KeyCode.F;
     [SerializeField] private float attackDistance = 0.3f;
     [SerializeField] private int damage = 25;
     [SerializeField] private Vector3 attackOffset = new Vector3(0, 1f, 0);
@@ -32,26 +33,52 @@ public class PlayerCombat : PlayerAction
     private bool sheathed = false;
     private float sheathInputTime = 0f;
     private bool sheathInputReset = true;
-    private void Start()
+    public override void Init(params object[] objects)
     {
+        base.Init(objects);
+
         combatStamina = 1f;
         master.Animator.SetFloat(NovUtil.CombatStaminaHash, combatStamina);
+        master.Equipment.AssignOnEquippedChanged(OnEquippedChanged);
+    }
+    private void OnEquippedChanged(ItemActive item, bool equipped)
+    {
+        // swap items animation, other setup?
+        
     }
     public override void ActionUpdate(out bool blockOther)
     {
-        bool attackActionKeyDown = Input.GetKeyDown(attackActionKey);
+        blockOther = false;
+
+        bool rightHandKeyDown = Input.GetKeyDown(rightHandKey);
+        bool rightHandKeyHold = Input.GetKey(rightHandKey);
+        bool rightHandKeyUp = Input.GetKeyUp(rightHandKey);
+        
+        bool leftHandKeyDown = Input.GetKeyDown(leftHandKey);
+        bool leftHandKeyHold = Input.GetKey(leftHandKey);
+        bool leftHandKeyUp = Input.GetKeyUp(leftHandKey);
+
         bool blockActionKeyHold = Input.GetKey(blockActionKey);
+
         bool sheatheActionKeyHold = Input.GetKey(sheatheActionKey);
         bool sheatheActionKeyUp = Input.GetKeyUp(sheatheActionKey);
-        
-        if (attackActionKeyDown && !isBlocking && sheathed)
+
+        if (rightHandKeyDown) master.Equipment.MainItem?.OnInputDown();
+        if (rightHandKeyHold) master.Equipment.MainItem?.OnInputHold();
+        if (rightHandKeyUp) master.Equipment.MainItem?.OnInputUp();
+
+        if (leftHandKeyDown) master.Equipment.SecondaryItem?.OnInputDown();
+        if (leftHandKeyHold) master.Equipment.SecondaryItem?.OnInputHold();
+        if (leftHandKeyUp) master.Equipment.SecondaryItem?.OnInputUp();
+
+        if (rightHandKeyDown && !isBlocking && sheathed)
         {
             AttackInput();
-            blockOther = true;
+            //blockOther = true;
         }
         else if (isAttacking)
         {
-            blockOther = true;
+            //blockOther = true;
         }
         else
         {
@@ -65,7 +92,7 @@ public class PlayerCombat : PlayerAction
                 SheatheInput(sheatheActionKeyHold, sheatheActionKeyUp);
             }
             master.Animator.SetBool(NovUtil.IsBlockingHash, isBlocking);
-            blockOther = isBlocking;
+            //blockOther = isBlocking;
         }
 
         StaminaRestoreUpdate();
@@ -96,12 +123,12 @@ public class PlayerCombat : PlayerAction
         if (!sheatheActionKeyHold) return;
         if (!NovUtil.TimerCheck(ref sheathInputTime, sheathTimer, Time.deltaTime)) return;
 
-        Sheathe();
-    }
-    private void Sheathe()
-    {
-        sheathed = !sheathed;
         sheathInputReset = false;
+        Sheathe(!sheathed);
+    }
+    private void Sheathe(bool state)
+    {
+        sheathed = state;
         master.Animator.SetBool(NovUtil.SheathedHash, sheathed);
     }
     private void StaminaRestoreUpdate()
@@ -110,7 +137,7 @@ public class PlayerCombat : PlayerAction
 
         combatStamina = Mathf.Min(staminaMax, combatStamina + staminaPerSecond * Time.deltaTime);
         master.Animator.SetFloat(NovUtil.CombatStaminaHash, combatStamina);
-        master.PlayerCamera.SetNoise((staminaMax - combatStamina) / (staminaMax - staminaMin));
+        master.Camera.SetNoise((staminaMax - combatStamina) / (staminaMax - staminaMin));
     }
 
     public override void ActionDisturbed(CharacterAction disturber)
@@ -138,9 +165,9 @@ public class PlayerCombat : PlayerAction
     {
         combatStamina = Mathf.Max(staminaMin, combatStamina - staminaPerAttack);
         master.Animator.SetFloat(NovUtil.CombatStaminaHash, combatStamina);
-        master.PlayerCamera.SetNoise((staminaMax - combatStamina) / (staminaMax - staminaMin));
+        master.Camera.SetNoise((staminaMax - combatStamina) / (staminaMax - staminaMin));
 
-        if (!master.BoxCastForward(attackDistance, halfExtents,
+        if (!master.OverlapBoxForward(attackDistance, halfExtents,
             InternalSettings.CharacterMask, out Collider[] hits)) return;
         
         foreach (Collider hit in hits)
@@ -206,11 +233,11 @@ public class PlayerCombat : PlayerAction
     }
     private void OnDrawGizmosSelected()
     {
-        if (!master || !master.PlayerCamera) return;
+        if (!master || !master.Camera) return;
 
         Gizmos.DrawCube(
-            (master.PlayerCamera.Position + master.PlayerCamera.Position + (master.PlayerCamera.Forward * attackDistance)) / 2f,
-            master.PlayerCamera.Rotation * halfExtents * 2f);
+            (master.Camera.Position + master.Camera.Position + (master.Camera.Forward * attackDistance)) / 2f,
+            master.Camera.Rotation * halfExtents * 2f);
     }
     private void OnGUI()
     {

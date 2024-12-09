@@ -65,10 +65,10 @@ public class PlayerPickupInteraction : PlayerAction
     }
     private void OnDrawGizmosSelected()
     {
-        if (master && master.PlayerCamera)
+        if (master && master.Camera)
         {
-            Gizmos.DrawWireSphere(master.PlayerCamera.Position, range);
-            Gizmos.DrawLine(master.PlayerCamera.Position, master.PlayerCamera.Position + master.PlayerCamera.Forward * 4f);
+            Gizmos.DrawWireSphere(master.Camera.Position, range);
+            Gizmos.DrawLine(master.Camera.Position, master.Camera.Position + master.Camera.Forward * 4f);
         }
     }
 }

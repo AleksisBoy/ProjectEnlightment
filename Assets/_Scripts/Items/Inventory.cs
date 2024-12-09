@@ -1,9 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
+using UnityEngine;
 
 public class Inventory
 {
+    private Inventory.Item healingPotions = null;
+    private Inventory.Item manaPotions = null;
+    private Inventory.Item abilityPoints = null;
+    private Inventory.Item money = null;
+
     private List<Item> items = new List<Item>();
+
+    public const string ItemName_HPotion = "Healing Potion";
+    public const string ItemName_MPotion = "Mana Potion";
+    public const string ItemName_Money = "Money";
+    public const string ItemName_AP = "AbilityPoint";
 
     public void Add(in EItem item, in int amount)
     {

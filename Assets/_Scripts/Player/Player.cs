@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Player : MonoBehaviour, IAnimationDispatch, IHealth
+public class Player : MonoBehaviour, IAnimationDispatch, IHealth, IActor
 {
     [SerializeField] private Animator animator = null;
     [SerializeField] private Collider playerCollider = null;
@@ -12,14 +12,6 @@ public class Player : MonoBehaviour, IAnimationDispatch, IHealth
     [SerializeField] private float reviveTime = 2f;
     [Header("Pickups")]
     [SerializeField] private int maxHealingPotions = 3;
-    [SerializeField] private KeyCode healKey = KeyCode.H;
-
-    private Inventory inventory = null;
-
-    private const string ItemName_HPotion = "HealingPotion";
-    private const string ItemName_MPotion = "ManaPotion";
-    private const string ItemName_Money = "Money";
-    private const string ItemName_AP = "AbilityPoint";
 
     private int hp = 0;
     private bool dead = false;
@@ -30,16 +22,16 @@ public class Player : MonoBehaviour, IAnimationDispatch, IHealth
     private Rigidbody rb = null;
     private PlayerCamera playerCamera = null;
     private PlayerAnimation playerAnimation = null;
+    private PlayerEquipment equipment = null;
 
     private List<CharacterAction> actionList = new List<CharacterAction>();
 
     private void Awake()
     {
         rb = GetComponent<Rigidbody>();
-        foreach (CharacterAction action in GetComponents<CharacterAction>())
+        CharacterAction[] actions = GetComponents<CharacterAction>();
+        foreach (CharacterAction action in actions)
         {
-            actionList.Add(action);
-            action.ActionSetup(this);
             if (!playerCamera && action as PlayerCamera)
             {
                 playerCamera = action as PlayerCamera;
@@ -48,15 +40,24 @@ public class Player : MonoBehaviour, IAnimationDispatch, IHealth
             {
                 playerAnimation = action as PlayerAnimation;
             }
+            else if (!equipment && action as PlayerEquipment)
+            {
+                equipment = action as PlayerEquipment;
+            }
+        }
+        foreach (CharacterAction action in actions)
+        {
+            actionList.Add(action);
+            action.Init(this);
         }
         CharacterAction.SortActions<CharacterAction>(actionList, out actionList);
     }
     private void Start()
     {
         InternalSettings.EnableCursor(false);
-        inventory = InternalSettings.GetDefaultPlayerInventory();
         if (!userInterface) userInterface = InternalSettings.SpawnUserInterface();
         userInterface.SetPlayer(this);
+        equipment.Equip(InternalSettings.SwordItem);
         Revive();
     }
     private void Update()
@@ -70,10 +71,6 @@ public class Player : MonoBehaviour, IAnimationDispatch, IHealth
         if (Input.GetKeyDown(KeyCode.P))
         {
             GetHit(10, null, out bool _died);
-        }
-        if (Input.GetKeyDown(healKey))
-        {
-            HealWithPotion();
         }
 
         bool block = false;
@@ -104,7 +101,7 @@ public class Player : MonoBehaviour, IAnimationDispatch, IHealth
     }
     public void AddItem(EItem item, int amount)
     {
-        inventory.Add(item, amount);
+        equipment.AddItem(item, amount);
         UI.ItemPickedUp(item, amount);
     }
     public float GetDotProduct(Vector3 otherPosition)
@@ -116,32 +113,35 @@ public class Player : MonoBehaviour, IAnimationDispatch, IHealth
     public bool RaycastForward(float distance, LayerMask mask, out RaycastHit hit, QueryTriggerInteraction query = QueryTriggerInteraction.Ignore)
     {
         return Physics.Raycast(
-            PlayerCamera.Position,
-            PlayerCamera.Forward,
+            Camera.Position,
+            Camera.Forward,
             out hit,
             distance,
             mask,
             query);
     }
-    public bool BoxCastForward(float distance, Vector3 halfExtents, LayerMask mask, out Collider[] hits, QueryTriggerInteraction query = QueryTriggerInteraction.Ignore)
+    public bool OverlapBoxForward(float distance, Vector3 halfExtents, LayerMask mask, out Collider[] colls, QueryTriggerInteraction query = QueryTriggerInteraction.Ignore)
     {
-        hits = Physics.OverlapBox(
-            (PlayerCamera.Position + playerCamera.Position + (playerCamera.Forward * distance)) / 2f,
+        colls = Physics.OverlapBox(
+            (Camera.Position + playerCamera.Position + (playerCamera.Forward * distance)) / 2f,
             halfExtents,
             playerCamera.Rotation,
             mask,
             query);
 
-        /*
+
+        return colls.Length > 0;
+    }
+    public bool BoxCastForward(float distance, Vector3 halfExtents, LayerMask mask, out RaycastHit[] hits, QueryTriggerInteraction query = QueryTriggerInteraction.Ignore)
+    {
         hits = Physics.BoxCastAll(
-            (PlayerCamera.Position + playerCamera.Position + (playerCamera.Forward * distance)) / 2f,
+            Camera.Position + Camera.Forward * 0.1f,
             halfExtents,
-            PlayerCamera.Forward,
-            PlayerCamera.Rotation,
+            Camera.Forward,
+            Camera.Rotation,
             distance,
             mask,
             query);
-        */
 
         return hits.Length > 0;
     }
@@ -213,14 +213,25 @@ public class Player : MonoBehaviour, IAnimationDispatch, IHealth
         playerMesh.SetActive(true);
         playerCollider.gameObject.SetActive(true);
     }
-    private void HealWithPotion()
+    public bool TryHeal (uint add)
     {
-        if (inventory.HasItem(ItemName_HPotion, out Inventory.Item hpotion) || hpotion.amount <= 0) return; // add feedback that not enough potions
-        if (hp >= maxHP) return; // add feedback that player is max hp
+        if (hp >= maxHP) return false; // add feedback that player is max hp
 
-        hp = Mathf.Min(maxHP, hp + (int)(maxHP * InternalSettings.HealPotionStrength));
+        Heal((int)add);
+        return true;
+    }
+    public bool TryHealFromMax (float perc)
+    {
+        if (hp >= maxHP) return false; // add feedback that player is max hp
+
+        int heal = (int)(maxHP * perc);
+        Heal(heal);
+        return true;
+    }
+    private void Heal(int add)
+    {
+        hp = Mathf.Min(maxHP, hp + add);
         onHealthChanged?.Invoke(hp, maxHP);
-        hpotion.amount--;
     }
 
     public void AssignOnHealthChanged(IHealth.OnHealthChanged action)
@@ -235,13 +246,15 @@ public class Player : MonoBehaviour, IAnimationDispatch, IHealth
     {
         return animator;
     }
+    public IHealth GetHealth() => this;
+    public GameObject GetGameObject() => gameObject;
 
-    public PlayerCamera PlayerCamera => playerCamera;
+    public PlayerCamera Camera => playerCamera;
     public PlayerAnimation PlayerAnimation => playerAnimation;
+    public PlayerEquipment Equipment => equipment;
     public GameObject Mesh => playerMesh;
     public Animator Animator => animator;
     public Rigidbody RB => rb;
     public Collider Collider => playerCollider;
-    public Inventory Inventory => inventory;
     public UserInterface UI => userInterface;
 }
