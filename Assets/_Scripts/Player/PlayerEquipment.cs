@@ -52,6 +52,10 @@ public class PlayerEquipment : PlayerAction
     {
         if (item.RightHanded)
         {
+            if (mainItem)
+            {
+                InternalSettings.GetStoredPrefab(mainItem).SetActive(false);
+            }
             PutItemInHand(item, rightHandTransform);
             mainItem = item;
         }

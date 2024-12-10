@@ -37,11 +37,11 @@ public class PlayerAnimation : PlayerAction
         }
         blockOther = animating;
     }
-    public override void CallAnimationEvent(string animEvent)
+    public override void CallAnimationEvent(NovUtil.AnimEvent animEvent)
     {
         switch (animEvent)
         {
-            case "PlayerAnimationFinish":
+            case NovUtil.AnimEvent.PlayerAnimationFinish:
                 animating = false;
                 master.RB.isKinematic = false;
                 master.Camera.SetPan(master.Mesh.transform.eulerAngles.y);

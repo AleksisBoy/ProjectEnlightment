@@ -133,6 +133,7 @@ MonoBehaviour:
   priority: 20
   update: 1
   cineCamera: {fileID: 0}
+  meshRotationSpeed: 45
   noiseAmplitudeRange: {x: 0, y: 1}
   noiseFrequencyRange: {x: 0, y: 4}
   minNoise: 0.14
@@ -173,17 +174,8 @@ MonoBehaviour:
   leftHandKey: 324
   blockActionKey: 306
   sheatheActionKey: 102
-  attackDistance: 1.5
-  damage: 25
-  attackOffset: {x: 0, y: 1, z: 0}
-  halfExtents: {x: 0.15, y: 0.2, z: 0.5}
   frontAssassinationMinDot: 0.5
   sheathTimer: 0.65
-  staminaPerSecond: 0.16
-  staminaReloadCooldown: 1.2
-  staminaPerAttack: 0.06
-  staminaMin: 0.66
-  staminaMax: 1
 --- !u!114 &3943841550154725332
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1301,6 +1293,10 @@ PrefabInstance:
     - target: {fileID: 9054104346581490719, guid: 8a028bbd35c1bb14e87c755cfa3ad0e8, type: 3}
       propertyPath: m_CastShadows
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9054104346581490719, guid: 8a028bbd35c1bb14e87c755cfa3ad0e8, type: 3}
+      propertyPath: m_RendererPriority
+      value: 18
       objectReference: {fileID: 0}
     - target: {fileID: 9140253385185518857, guid: 8a028bbd35c1bb14e87c755cfa3ad0e8, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x

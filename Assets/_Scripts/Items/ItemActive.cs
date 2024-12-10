@@ -9,11 +9,15 @@ public abstract class ItemActive : EItem
     [SerializeField] private Vector3 handTransformRotation = Vector3.zero;
 
     protected IActor actor;
+    public abstract void Init();
     public abstract void OnEquip(IActor actor);
+    public abstract void EquippedUpdate();
     public abstract void OnDequip();
     public abstract void OnInputDown();
     public abstract void OnInputHold();
     public abstract void OnInputUp();
+    public abstract void CallEvent(NovUtil.AnimEvent combatEvent);
+    public abstract void Disturb();
 
     public bool RightHanded => rightHanded;
     public GameObject MeshPrefab => meshPrefab;

@@ -16,6 +16,14 @@ public static class NovUtil
     public static readonly int SheathedHash = Animator.StringToHash("Sheathed");
     public static readonly int GunshotHash = Animator.StringToHash("Gunshot");
 
+    public enum AnimEvent
+    {
+        AttackImpact,
+        AttackFinish,
+        CombatParry,
+        PlayerAnimationFinish,
+        OpenAttackWindow
+    }
     public static T GetClosestFromArray<T>(Vector3 position, in T[] list) where T : Component
     {
         float closestDistance = 1000f;

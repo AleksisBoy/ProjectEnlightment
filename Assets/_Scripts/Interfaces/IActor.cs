@@ -11,7 +11,25 @@ public interface IActor
     public bool BoxCastForward(float distance, Vector3 halfExtents, LayerMask mask,
         out RaycastHit[] hits, QueryTriggerInteraction query = QueryTriggerInteraction.Ignore);
 
+    public void ProcessActorData(Data data);
+
     public IHealth GetHealth();
     public Animator GetAnimator();
     public GameObject GetGameObject();
+
+    public struct Data
+    {
+        public enum Type
+        {
+            StaminaPerc
+        }
+        public Type type;
+        public float value;
+
+        public Data(Type type, float value)
+        {
+            this.type = type;
+            this.value = value;
+        }
+    }
 }

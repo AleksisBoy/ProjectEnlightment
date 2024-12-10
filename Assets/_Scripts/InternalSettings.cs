@@ -65,8 +65,14 @@ public class InternalSettings : MonoBehaviour
     }
     public static GameObject SpawnStorePrefab(ItemActive item, Transform parent)
     {
+        if (Get.storedPrefabs.ContainsKey(item))
+        {
+            Debug.LogError("Already spawned " + item.Name);
+            return null;
+        }
         GameObject prefab = Instantiate(item.MeshPrefab, parent);
         Get.storedPrefabs.Add(item, prefab);
+        item.Init();
         return prefab;
     }
     private void InitTMP()

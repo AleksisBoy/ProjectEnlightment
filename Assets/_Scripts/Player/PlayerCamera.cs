@@ -5,6 +5,7 @@ public class PlayerCamera : PlayerAction
 {
     [Header("Camera")]
     [SerializeField] private CinemachineCamera cineCamera = null;
+    [SerializeField] private float meshRotationSpeed = 45f;
     [SerializeField] private Vector2 noiseAmplitudeRange = new Vector2(0f, 2f);
     [SerializeField] private Vector2 noiseFrequencyRange = new Vector2(0f, 2f);
     [Range(0f, 1f)]
@@ -52,7 +53,11 @@ public class PlayerCamera : PlayerAction
 
         panTilt.enabled = true;
         axisController.enabled = true;
-        master.Mesh.transform.rotation = cineCamera.transform.rotation;
+    }
+    private void LateUpdate()
+    {
+        master.Mesh.transform.rotation = Quaternion.Slerp(master.Mesh.transform.rotation,
+            cineCamera.transform.rotation, Time.deltaTime * meshRotationSpeed);
     }
     public override bool ActionBlocked(CharacterAction blocker)
     {

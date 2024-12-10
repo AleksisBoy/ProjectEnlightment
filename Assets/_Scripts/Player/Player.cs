@@ -169,7 +169,7 @@ public class Player : MonoBehaviour, IAnimationDispatch, IHealth, IActor
         return inputVector;
     }
     // IAnimationDispatch
-    public void CallAnimationEvent(string animEvent)
+    public void CallAnimationEvent(NovUtil.AnimEvent animEvent)
     {
         foreach (CharacterAction action in actionList)
         {
@@ -241,6 +241,21 @@ public class Player : MonoBehaviour, IAnimationDispatch, IHealth, IActor
     public void RemoveOnHealthChanged(IHealth.OnHealthChanged action)
     {
         onHealthChanged -= action;
+    }
+    // IActor
+
+    public void ProcessActorData(IActor.Data data)
+    {
+        switch (data.type)
+        {
+            case IActor.Data.Type.StaminaPerc:
+                SetCameraNoise(data.value);
+                break;
+        }
+    }
+    private void SetCameraNoise(float perc)
+    {
+        Camera.SetNoise(perc);
     }
     public Animator GetAnimator()
     {

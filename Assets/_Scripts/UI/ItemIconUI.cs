@@ -67,7 +67,7 @@ public class ItemIconUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
     }
     private void OnDisable()
     {
-        if (Selected == this) Deselect();
+        if (Selected == this) Selected = null;
     }
     // Action
     public static void Assign_OnSelectedChanged(OnSelectedChanged action)

@@ -10,13 +10,20 @@ public class ItemPistol : ItemActive
     [SerializeField] private Vector3 halfExtents = Vector3.zero;
 
     private float lastTimeShot = 0f;
+    public override void Init()
+    {
+        lastTimeShot = 0f;
+    }
     public override void OnEquip(IActor actor)
     {
         lastTimeShot = Time.time - (shootCooldown / 2f);
         this.actor = actor;
-        Debug.Log(Name + " equipped");
     }
 
+    public override void EquippedUpdate()
+    {
+
+    }
     public override void OnDequip()
     {
         Debug.Log(Name + " dequipped");
@@ -38,6 +45,15 @@ public class ItemPistol : ItemActive
     {
 
     }
+    public override void CallEvent(NovUtil.AnimEvent animEvent)
+    {
+
+    }
+
+    public override void Disturb()
+    {
+
+    }
     private void Shoot()
     {
         if (!actor.BoxCastForward(maxDistance, halfExtents, InternalSettings.CharacterMask,
@@ -47,9 +63,8 @@ public class ItemPistol : ItemActive
         {
             IHealth health = hit.transform.GetComponentInParent<IHealth>();
             if (health == null || health.Equals(actor.GetHealth())) continue;
-            Debug.Log(hit.distance / maxDistance);
+
             int damage = (int)(maxDamage * (Mathf.Abs(1f - hit.distance / maxDistance)));
-            Debug.Log(damage);
             health.GetHit(damage, actor.GetGameObject(), out bool died);
 
             if (died) health.GetAnimator()?.SetTrigger(NovUtil.DiedHash);
@@ -57,4 +72,5 @@ public class ItemPistol : ItemActive
         actor.GetAnimator().SetTrigger(NovUtil.GunshotHash);
         lastTimeShot = Time.time;
     }
+
 }

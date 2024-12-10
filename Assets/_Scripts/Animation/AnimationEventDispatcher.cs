@@ -3,7 +3,6 @@ using UnityEngine;
 public class AnimationEventDispatcher : MonoBehaviour
 {
     [SerializeField] private GameObject target = null;
-    [SerializeField] private string[] animationEvents;
 
     private IAnimationDispatch dispatch;
 
@@ -16,7 +15,7 @@ public class AnimationEventDispatcher : MonoBehaviour
         }
         target = null;
     }
-    public void CallEvent(int index)
+    public void CallEvent(NovUtil.AnimEvent animEvent)
     {
         if (dispatch == null)
         {
@@ -24,6 +23,6 @@ public class AnimationEventDispatcher : MonoBehaviour
             return;
         }
 
-        dispatch.CallAnimationEvent(animationEvents[index]);
+        dispatch.CallAnimationEvent(animEvent);
     }
 }

@@ -2,5 +2,5 @@ using UnityEngine;
 
 public interface IAnimationDispatch
 {
-    public void CallAnimationEvent(string animEvent);
+    public void CallAnimationEvent(NovUtil.AnimEvent animEvent);
 }

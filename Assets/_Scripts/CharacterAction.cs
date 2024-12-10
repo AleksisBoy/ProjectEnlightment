@@ -51,5 +51,5 @@ public class CharacterAction : MonoBehaviour, IAnimationDispatch
         Debug.Log(debug);
     }
 
-    public virtual void CallAnimationEvent(string animEvent) { }
+    public virtual void CallAnimationEvent(NovUtil.AnimEvent animEvent) { }
 }

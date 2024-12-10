@@ -20,5 +20,6 @@ MonoBehaviour:
   rightHanded: 1
   meshPrefab: {fileID: 8295139207976453238, guid: 34a37f5629823994bb6534993b7dcc7b, type: 3}
   handTransformRotation: {x: 339.37204, y: 270.46936, z: 258.54376}
-  maxDamage: 80
-  maxDistance: 10
+  attackDistance: 1.5
+  damage: 25
+  halfExtents: {x: 0.15, y: 0.2, z: 0.5}
