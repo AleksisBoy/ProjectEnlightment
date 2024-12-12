@@ -4,20 +4,21 @@ public class PlayerPickupInteraction : PlayerAction
 {
     [Header("Pickup Interaction")]
     [SerializeField] private float range = 1f;
-    [SerializeField] private LayerMask pickupMask;
+    [SerializeField] private LayerMask pickupMask; // env, character, pickup, ground
     [SerializeField] private KeyCode actionKey = KeyCode.None;
 
     private PickupObject currentHighlighted = null;
     public override void ActionUpdate(out bool blockOther)
     {
         blockOther = false;
-        if (!master.RaycastForward(range, pickupMask, out RaycastHit hit, QueryTriggerInteraction.Collide))
+        if (!master.RaycastForwardAll(range, pickupMask, out RaycastHit[] hits, QueryTriggerInteraction.Collide))
         {
             ResetCurrentHighlighted();
             return;
         }
 
-        PickupObject pickup = hit.transform.GetComponent<PickupObject>();
+        hits = NovUtil.SortHitsByDistance(hits);
+        PickupObject pickup = hits[0].transform.GetComponent<PickupObject>();
         if (pickup == null || !pickup.enabled)
         {
             ResetCurrentHighlighted();
@@ -51,7 +52,8 @@ public class PlayerPickupInteraction : PlayerAction
     }
     private void AssignCurrentHighlighted(PickupObject pickup)
     {
-        if (currentHighlighted) return;
+        if (!pickup || currentHighlighted == pickup) return;
+        else currentHighlighted?.HighlightEnd();
 
         currentHighlighted = pickup;
         currentHighlighted.HighlightBegin();

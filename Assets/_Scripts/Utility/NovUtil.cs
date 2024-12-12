@@ -136,4 +136,25 @@ public static class NovUtil
     {
         return Time.time - lastTime >= timer;
     }
+    public static RaycastHit[] SortHitsByDistance(RaycastHit[] hits)
+    {
+        List<RaycastHit> hitsList = new List<RaycastHit>(hits);
+        List<RaycastHit> sorted = new List<RaycastHit>();
+        while (sorted.Count < hits.Length)
+        {
+            float closest = 10000f;
+            int closestIndex = 0;
+            for (int i = 0; i < hitsList.Count; i++)
+            {
+                if (hitsList[i].distance < closest)
+                {
+                    closest = hits[i].distance;
+                    closestIndex = i;
+                }
+            }
+            sorted.Add(hitsList[closestIndex]);
+            hitsList.RemoveAt(closestIndex);
+        }
+        return sorted.ToArray();
+    }
 }

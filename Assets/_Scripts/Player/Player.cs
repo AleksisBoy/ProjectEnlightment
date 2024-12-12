@@ -120,6 +120,17 @@ public class Player : MonoBehaviour, IAnimationDispatch, IHealth, IActor
             mask,
             query);
     }
+    public bool RaycastForwardAll(float distance, LayerMask mask, out RaycastHit[] hits, QueryTriggerInteraction query = QueryTriggerInteraction.Ignore)
+    {
+        hits = Physics.RaycastAll(
+            Camera.Position,
+            Camera.Forward,
+            distance,
+            mask,
+            query);
+
+        return hits.Length > 0;
+    }
     public bool OverlapBoxForward(float distance, Vector3 halfExtents, LayerMask mask, out Collider[] colls, QueryTriggerInteraction query = QueryTriggerInteraction.Ignore)
     {
         colls = Physics.OverlapBox(

@@ -6841,6 +6841,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: -9.532125
       objectReference: {fileID: 0}
+    - target: {fileID: 358649362085444232, guid: 8ae48ec53bf077d42b7cd3d18e65460b, type: 3}
+      propertyPath: pickupMask.m_Bits
+      value: 3393
+      objectReference: {fileID: 0}
     - target: {fileID: 638158738635200617, guid: 8ae48ec53bf077d42b7cd3d18e65460b, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
       value: 15.422856
