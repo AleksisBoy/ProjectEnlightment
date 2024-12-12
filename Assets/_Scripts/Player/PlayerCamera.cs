@@ -66,6 +66,29 @@ public class PlayerCamera : PlayerAction
         cineCamera.transform.rotation = master.Mesh.transform.rotation;
         return true;
     }
+    public void LookAt(Vector3 pos)
+    {
+        panTilt.enabled = false;
+        axisController.enabled = false;
+        Vector3 direction = pos - cineCamera.transform.position;
+        Quaternion rotation = Quaternion.LookRotation(direction.normalized);
+        SetRotation(rotation);
+    }
+    public void LookAtSmooth(Vector3 pos, float smoothSpeed)
+    {
+        panTilt.enabled = false;
+        axisController.enabled = false;
+        Vector3 direction = pos - cineCamera.transform.position;
+        Quaternion rotation = Quaternion.LookRotation(direction.normalized);
+        SetRotation(Quaternion.Slerp(cineCamera.transform.rotation, rotation, smoothSpeed * Time.deltaTime));
+    }
+    public void SetRotation(Quaternion rotation)
+    {
+        cineCamera.transform.rotation = rotation;
+
+        SetPan(rotation.eulerAngles.y);
+        SetTilt(rotation.eulerAngles.x);
+    }
     public void SetNoise(float weight)
     {
         weight = Mathf.Max(minNoise, Mathf.Clamp01(weight));

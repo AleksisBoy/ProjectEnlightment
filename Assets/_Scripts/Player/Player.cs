@@ -7,6 +7,7 @@ public class Player : MonoBehaviour, IAnimationDispatch, IHealth, IActor
     [SerializeField] private Collider playerCollider = null;
     [SerializeField] private GameObject playerMesh = null;
     [SerializeField] private UserInterface userInterface = null;
+    [SerializeField] private float radius = 0.35f;
     [Header("Health")]
     [SerializeField] private int maxHP = 100;
     [SerializeField] private float reviveTime = 2f;
@@ -26,6 +27,25 @@ public class Player : MonoBehaviour, IAnimationDispatch, IHealth, IActor
 
     private List<CharacterAction> actionList = new List<CharacterAction>();
 
+    private void OnValidate()
+    {
+        if (!playerCollider) return;
+
+        if (playerCollider as BoxCollider)
+        {
+            BoxCollider box = (BoxCollider)playerCollider;
+            box.size = new Vector3(radius * 2f, box.size.y, radius * 2f);
+        }
+        else if (playerCollider as CapsuleCollider)
+        {
+            CapsuleCollider capsule = (CapsuleCollider)playerCollider;
+            capsule.radius = radius;
+        }
+        else
+        {
+            playerCollider.transform.localScale = new Vector3(radius * 2f, playerCollider.transform.localScale.y, radius * 2f);
+        }
+    }
     private void Awake()
     {
         rb = GetComponent<Rigidbody>();
@@ -283,4 +303,5 @@ public class Player : MonoBehaviour, IAnimationDispatch, IHealth, IActor
     public Rigidbody RB => rb;
     public Collider Collider => playerCollider;
     public UserInterface UI => userInterface;
+    public float Radius => radius;
 }

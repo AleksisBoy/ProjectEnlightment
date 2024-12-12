@@ -171,6 +171,6 @@ public class ItemSword : ItemActive
     }
     private float GetStaminaPercentage()
     {
-        return (staminaMax - stamina) / (staminaMax - staminaMin);
+        return NovUtil.GetRangePercentage(stamina, staminaMin, staminaMax);
     }
 }

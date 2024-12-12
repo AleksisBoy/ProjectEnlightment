@@ -8,6 +8,8 @@ public class InternalSettings : MonoBehaviour
     [SerializeField] private float healPotionStrength = 0.2f;
     [Header("Masks")]
     [SerializeField] private LayerMask characterMask;
+    [SerializeField] private LayerMask obstacleLayer;
+    [SerializeField] private LayerMask environmentLayer;
     [Header("Layers")]
     [SerializeField] private int outlineLayer = -1;
     [SerializeField] private int ragdollLayer = 11;
@@ -24,6 +26,8 @@ public class InternalSettings : MonoBehaviour
     public static GUIStyle DebugStyle => Get.debugStyle;
     public static float HealPotionStrength => Get.healPotionStrength;
     public static LayerMask CharacterMask => Get.characterMask;
+    public static LayerMask ObstacleLayer => Get.obstacleLayer;
+    public static LayerMask EnvironmentLayer => Get.environmentLayer;
     public static int OutlineLayer => Get.outlineLayer;
     public static int RagdollLayer => Get.ragdollLayer;
     public static Color SelectedIconColor => Get.selectedIconColor;

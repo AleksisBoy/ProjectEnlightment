@@ -115,6 +115,12 @@ MonoBehaviour:
   characterMask:
     serializedVersion: 2
     m_Bits: 1152
+  obstacleLayer:
+    serializedVersion: 2
+    m_Bits: 4096
+  environmentLayer:
+    serializedVersion: 2
+    m_Bits: 4161
   outlineLayer: 9
   ragdollLayer: 11
   playerDefaultItems:
@@ -126,6 +132,9 @@ MonoBehaviour:
     amount: 0
   - get: {fileID: 11400000, guid: 88488570e5f74034b9855c5bc0610519, type: 2}
     amount: 0
+  - get: {fileID: 11400000, guid: cdedae0ee2903a947a901d1781c8aab4, type: 2}
+    amount: 1
+  swordItem: {fileID: 11400000, guid: f0b9b654ccb78454da7108605c5a3564, type: 2}
   userInterfacePrefab: {fileID: 2555585968260613193, guid: df5afbe55f88131408c67b317e84b1f2, type: 3}
   defaultIconColor: {r: 1, g: 1, b: 1, a: 1}
   selectedIconColor: {r: 0.847, g: 1, b: 1, a: 0.9254902}

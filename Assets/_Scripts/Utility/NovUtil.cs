@@ -157,4 +157,8 @@ public static class NovUtil
         }
         return sorted.ToArray();
     }
+    public static float GetRangePercentage(float value, float min, float max)
+    {
+        return (max - value) / (max - min);
+    }
 }
