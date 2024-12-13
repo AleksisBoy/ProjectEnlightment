@@ -22,7 +22,12 @@ public static class NovUtil
         AttackFinish,
         CombatParry,
         PlayerAnimationFinish,
-        OpenAttackWindow
+        OpenAttackWindow,
+        TurningRight90Finish,
+        TurningRight180Finish,
+        TurningLeft90Finish,
+        TurningLeft180Finish,
+        GetHitFinish
     }
     public static T GetClosestFromArray<T>(Vector3 position, in T[] list) where T : Component
     {

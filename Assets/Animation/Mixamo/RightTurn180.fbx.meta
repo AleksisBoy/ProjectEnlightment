@@ -1,74 +1,9 @@
 fileFormatVersion: 2
-guid: c7410220906fd82459815624d4b9b3a7
+guid: 481f072de124e894b98fc9a202c35a35
 ModelImporter:
   serializedVersion: 22200
   internalIDToNameTable: []
-  externalObjects:
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: 01
-    second: {fileID: 2100000, guid: fd8ab45a98767bc45a17ad41482775a7, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: Ch40_body
-    second: {fileID: 2100000, guid: e7af5ef6f247bd34787e7b211ef174cf, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: Ch40_body1
-    second: {fileID: 2100000, guid: 9f612df97e6fe3045b7e9b1a8d36d67f, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: Ch40_hair
-    second: {fileID: 2100000, guid: ad2d5564084b3a14e836c24370f4999a, type: 2}
-  - first:
-      type: UnityEngine:Texture2D
-      assembly: UnityEngine.CoreModule
-      name: Ch40_1001_Diffuse
-    second: {fileID: 2800000, guid: 5c052112ebc09b74daa146d38f745a74, type: 3}
-  - first:
-      type: UnityEngine:Texture2D
-      assembly: UnityEngine.CoreModule
-      name: Ch40_1001_Glossiness
-    second: {fileID: 2800000, guid: fbe0490ea1ce1f248afe9ce470169966, type: 3}
-  - first:
-      type: UnityEngine:Texture2D
-      assembly: UnityEngine.CoreModule
-      name: Ch40_1001_Normal
-    second: {fileID: 2800000, guid: ada3bcfaa03ddcf4dbea5f058c763816, type: 3}
-  - first:
-      type: UnityEngine:Texture2D
-      assembly: UnityEngine.CoreModule
-      name: Ch40_1001_Specular
-    second: {fileID: 2800000, guid: ed1ae583c42a76248a5223b7e622d0f0, type: 3}
-  - first:
-      type: UnityEngine:Texture2D
-      assembly: UnityEngine.CoreModule
-      name: Ch40_1002_Diffuse
-    second: {fileID: 2800000, guid: 280d9f383f467d748961cf6bd3c2ad42, type: 3}
-  - first:
-      type: UnityEngine:Texture2D
-      assembly: UnityEngine.CoreModule
-      name: Ch40_1002_Glossiness
-    second: {fileID: 2800000, guid: 477b68d86ca6bbb41a5de84981ee49a5, type: 3}
-  - first:
-      type: UnityEngine:Texture2D
-      assembly: UnityEngine.CoreModule
-      name: Ch40_1002_Normal
-    second: {fileID: 2800000, guid: 9c37dc0fa0908f746bcaae7216f8c3ba, type: 3}
-  - first:
-      type: UnityEngine:Texture2D
-      assembly: UnityEngine.CoreModule
-      name: Ch40_1002_Specular
-    second: {fileID: 2800000, guid: f706dd8d5a3641047b24998edc494549, type: 3}
-  - first:
-      type: UnityEngine:Texture2D
-      assembly: UnityEngine.CoreModule
-      name: Ch40_1003_Diffuse
-    second: {fileID: 2800000, guid: b89173c38a7d0fd4789c7fa1beb5e208, type: 3}
+  externalObjects: {}
   materials:
     materialImportMode: 2
     materialName: 0
@@ -94,7 +29,36 @@ ModelImporter:
     animationWrapMode: 0
     extraExposedTransformPaths: []
     extraUserProperties: []
-    clipAnimations: []
+    clipAnimations:
+    - serializedVersion: 16
+      name: RightTurn180
+      takeName: mixamo.com
+      internalID: -203655887218126122
+      firstFrame: 0
+      lastFrame: 49
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 0
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask: []
+      maskType: 3
+      maskSource: {instanceID: 0}
+      additiveReferencePoseFrame: 0
     isReadable: 0
   meshes:
     lODScreenPercentages: []
@@ -114,7 +78,7 @@ ModelImporter:
     generateSecondaryUV: 0
     useFileUnits: 1
     keepQuads: 0
-    weldVertices: 0
+    weldVertices: 1
     bakeAxisConversion: 0
     preserveHierarchy: 0
     skinWeightsMode: 0

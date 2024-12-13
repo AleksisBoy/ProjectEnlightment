@@ -20,6 +20,11 @@ public abstract class AIAgent : MonoBehaviour
     protected float updateTime = 0f;
     private WaitForSeconds timer;
 
+    private void OnValidate()
+    {
+        if (!navAgent) return;
+        navAgent.stoppingDistance = closeDistance;
+    }
     protected virtual void Awake()
     {
         if (!navAgent) navAgent = GetComponent<NavMeshAgent>();
@@ -31,10 +36,16 @@ public abstract class AIAgent : MonoBehaviour
     {
         StartCoroutine(Behave());
     }
+    protected virtual bool Prebehave()
+    {
+        return true;
+    }
     private IEnumerator Behave()
     {
         while (true)
         {
+            if (!Prebehave()) yield return timer;
+
             treeStatus = tree.Process();
             yield return timer;
         }
