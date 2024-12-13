@@ -48,14 +48,15 @@ public class PlayerCombat : PlayerAction
         if (blockActionKeyHold && sheathed)
         {
             isBlocking = true;
+            master.Animator.SetBool(NovUtil.IsBlockingHash, isBlocking);
             return; // return if is blocking
         }
         else
         {
             isBlocking = false;
             SheatheInput(sheatheActionKeyHold, sheatheActionKeyUp);
+            master.Animator.SetBool(NovUtil.IsBlockingHash, isBlocking);
         }
-        master.Animator.SetBool(NovUtil.IsBlockingHash, isBlocking);
 
         if (sheathed)
         {

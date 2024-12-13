@@ -43,7 +43,7 @@ NavMeshAgent:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 12995363328034536}
   m_Enabled: 1
-  m_AgentTypeID: 0
+  m_AgentTypeID: -1372625422
   m_Radius: 0.21
   m_Speed: 3.5
   m_Acceleration: 8
@@ -73,6 +73,7 @@ MonoBehaviour:
   navAgent: {fileID: 168164287903298659}
   agentCollider: {fileID: 806970106557978336}
   walkSpeed: 4
+  closeDistance: 0.5
   eyeOffset: {x: 0, y: 1, z: 0}
   seeHalfExtents: {x: 0.05, y: 0.05, z: 0.25}
   timerRange: {x: 0.1, y: 1}
@@ -102,6 +103,8 @@ MonoBehaviour:
   - {fileID: 7283144831206751930}
   - {fileID: 8168997857246673534}
   - {fileID: 3284818336300087071}
+  path: {fileID: 0}
+  pathFollowMode: 0
 --- !u!1 &3836477051952746405
 GameObject:
   m_ObjectHideFlags: 0

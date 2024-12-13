@@ -8,7 +8,8 @@ public abstract class AIAgent : MonoBehaviour
     [SerializeField] protected Animator animator = null;
     [SerializeField] protected NavMeshAgent navAgent = null;
     [SerializeField] protected Collider agentCollider = null;
-    [SerializeField] private float walkSpeed = 4f;
+    [SerializeField] protected float walkSpeed = 4f;
+    [SerializeField] protected float closeDistance = 0.5f;
     [SerializeField] protected Vector3 eyeOffset = new Vector3(0, 1f, 0);
     [SerializeField] protected Vector3 seeHalfExtents = new Vector3(0.05f, 0.05f, 0.25f);
     [SerializeField] private Vector2 timerRange = new Vector2(0.1f, 1f);
@@ -16,6 +17,7 @@ public abstract class AIAgent : MonoBehaviour
     protected BehaviourTree tree;
     protected Node.Status treeStatus = Node.Status.RUNNING;
 
+    protected float updateTime = 0f;
     private WaitForSeconds timer;
 
     protected virtual void Awake()
@@ -39,7 +41,8 @@ public abstract class AIAgent : MonoBehaviour
     }
     private void SetTimerInRange()
     {
-        timer = new WaitForSeconds(Random.Range(timerRange.x, timerRange.y));
+        updateTime = Random.Range(timerRange.x, timerRange.y);
+        timer = new WaitForSeconds(updateTime);
     }
     // Nodes
     protected Node.Status CanSee(Collider coll, float maxDistance, float minDot)
