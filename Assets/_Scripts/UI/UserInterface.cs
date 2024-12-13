@@ -18,11 +18,16 @@ public class UserInterface : MonoBehaviour
     {
         this.player = player;
         player.AssignOnHealthChanged(OnHealthChanged);
+        player.AssignOnManaChanged(OnManaChanged);
     }
     // Stats Bar
     private void OnHealthChanged(int hp, int maxHP)
     {
         statsBar.SetHealth(hp, maxHP);
+    }
+    private void OnManaChanged(float mana, float maxMana)
+    {
+        statsBar.SetMana(mana, maxMana);
     }
     // Crosshair
     public void AddCrosshair(Crosshair.Type type)

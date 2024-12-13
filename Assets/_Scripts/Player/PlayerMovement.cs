@@ -15,6 +15,8 @@ public class PlayerMovement : PlayerAction
     [SerializeField] private Vector3 groundBoxCenterOffset = new Vector3(0, 0.3f, 0f);
     [SerializeField] private Vector3 groundBoxHalfExtents = new Vector3(0.4f, 0.05f, 0.4f);
     [SerializeField] private float groundCheckDistance = 0.4f;
+    [SerializeField] private float minFallVelocity = -5f;
+    [SerializeField] private float damageMultiplierPerVelocity = 1.5f;
     [Header("Vaulting")]
     [SerializeField] private Vector3 vaultRayOffset = new Vector3(0f, 0.3f, 0f);
     [SerializeField] private float vaultingDotMin = 0.8f;
@@ -237,6 +239,10 @@ public class PlayerMovement : PlayerAction
         //if(Physics.CapsuleCast(transform.position + new Vector3(0f, 0.1f, 0f), transform.position + Vector3.up, 0.3f, Vector3.down, 0.1f, groundMask))
         if (Physics.BoxCast(transform.position + groundBoxCenterOffset, groundBoxHalfExtents, Vector3.down, out RaycastHit hit, playerLookRotation, groundCheckDistance, groundMask))
         {
+            if (!isGrounded)
+            {
+                CheckFallDamage();
+            }
             isGrounded = true;
             if (spaceDown)
             {
@@ -250,6 +256,19 @@ public class PlayerMovement : PlayerAction
             speed *= 0.9f;
         }
         //master.Animator.SetBool(NovUtil.IsGroundedHash, isGrounded);
+    }
+    private void CheckFallDamage()
+    {
+        if(master.RB.linearVelocity.y < minFallVelocity)
+        {
+            float damage = 1f;
+            for (int i = 0; i < -master.RB.linearVelocity.y; i++)
+            {
+                damage *= damageMultiplierPerVelocity;
+            }
+            Debug.Log(damage);
+            master.GetHit((int)damage, null, out bool died);
+        }
     }
     private void Crouch()
     {

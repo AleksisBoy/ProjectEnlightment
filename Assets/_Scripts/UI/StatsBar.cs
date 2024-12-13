@@ -16,8 +16,9 @@ public class StatsBar : MonoBehaviour
         healthSlider.maxValue = maxValue;
         healthSlider.value = value;
     }
-    public void SetMana(float value)
+    public void SetMana(float value, float maxValue)
     {
+        manaSlider.maxValue = maxValue;
         manaSlider.value = value;
     }
 }

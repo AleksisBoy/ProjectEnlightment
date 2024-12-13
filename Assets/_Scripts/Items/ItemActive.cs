@@ -7,6 +7,7 @@ public abstract class ItemActive : EItem
     [SerializeField] private bool rightHanded = true;
     [SerializeField] private GameObject meshPrefab = null;
     [SerializeField] private Vector3 handTransformRotation = Vector3.zero;
+    [SerializeField] private string animationLayer = "LAYER";
 
     protected IActor actor;
     public abstract void Init();
@@ -22,4 +23,5 @@ public abstract class ItemActive : EItem
     public bool RightHanded => rightHanded;
     public GameObject MeshPrefab => meshPrefab;
     public Vector3 HandTransformRotation => handTransformRotation;
+    public string AnimationLayer => animationLayer;
 }

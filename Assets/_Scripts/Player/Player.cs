@@ -1,7 +1,8 @@
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Player : MonoBehaviour, IAnimationDispatch, IHealth, IActor
+public class Player : MonoBehaviour, IAnimationDispatch, IHealth, IActor, IMana
 {
     [SerializeField] private Animator animator = null;
     [SerializeField] private Collider playerCollider = null;
@@ -11,14 +12,24 @@ public class Player : MonoBehaviour, IAnimationDispatch, IHealth, IActor
     [Header("Health")]
     [SerializeField] private int maxHP = 100;
     [SerializeField] private float reviveTime = 2f;
+    [Header("Mana")]
+    [SerializeField] private float maxMana = 100;
+    [SerializeField] private float manaRestoreTimer = 8f;
+    [SerializeField] private float manaRestorePerSec = 1f;
     [Header("Pickups")]
     [SerializeField] private int maxHealingPotions = 3;
+
+    private bool isTeleporting = false;
 
     private int hp = 0;
     private bool dead = false;
     private float deathTime = 0;
-
     private IHealth.OnHealthChanged onHealthChanged;
+
+    private float mana = 0;
+    private float manaRestoreGap = 0;
+    private float lastManaUseTime = 0f;
+    private IMana.OnManaChanged onManaChanged;
 
     private Rigidbody rb = null;
     private PlayerCamera playerCamera = null;
@@ -92,6 +103,11 @@ public class Player : MonoBehaviour, IAnimationDispatch, IHealth, IActor
         {
             GetHit(10, null, out bool _died);
         }
+        if (NovUtil.TimeCheck(lastManaUseTime, manaRestoreTimer))
+        {
+            mana = NovUtil.MoveTowards(mana, manaRestoreGap, manaRestorePerSec * Time.deltaTime);
+            onManaChanged((int)mana, maxMana);
+        }
 
         bool block = false;
         CharacterAction blocker = null;
@@ -130,8 +146,10 @@ public class Player : MonoBehaviour, IAnimationDispatch, IHealth, IActor
         return Vector3.Dot(transform.forward, direction.normalized);
     }
 
-    public bool RaycastForward(float distance, LayerMask mask, out RaycastHit hit, QueryTriggerInteraction query = QueryTriggerInteraction.Ignore)
+    public bool RaycastForward(float distance, LayerMask mask, out RaycastHit hit, out Vector3 direction, QueryTriggerInteraction query = QueryTriggerInteraction.Ignore)
     {
+        direction = Camera.Forward;
+
         return Physics.Raycast(
             Camera.Position,
             Camera.Forward,
@@ -163,7 +181,7 @@ public class Player : MonoBehaviour, IAnimationDispatch, IHealth, IActor
 
         return colls.Length > 0;
     }
-    public bool BoxCastForward(float distance, Vector3 halfExtents, LayerMask mask, out RaycastHit[] hits, QueryTriggerInteraction query = QueryTriggerInteraction.Ignore)
+    public bool BoxCastForwardAll(float distance, Vector3 halfExtents, LayerMask mask, out RaycastHit[] hits, QueryTriggerInteraction query = QueryTriggerInteraction.Ignore)
     {
         hits = Physics.BoxCastAll(
             Camera.Position + Camera.Forward * 0.1f,
@@ -175,6 +193,20 @@ public class Player : MonoBehaviour, IAnimationDispatch, IHealth, IActor
             query);
 
         return hits.Length > 0;
+    }
+    public bool BoxCastForward(float distance, Vector3 halfExtents, LayerMask mask, out RaycastHit hit, out Vector3 direction, QueryTriggerInteraction query = QueryTriggerInteraction.Ignore)
+    {
+        direction = Camera.Forward;
+
+        return Physics.BoxCast(
+            Camera.Position + Camera.Forward * 0.1f,
+            halfExtents,
+            Camera.Forward,
+            out hit,
+            Camera.Rotation,
+            distance,
+            mask,
+            query);
     }
     // Input
     public static Vector3 GetMoveInputVector()
@@ -239,7 +271,10 @@ public class Player : MonoBehaviour, IAnimationDispatch, IHealth, IActor
     {
         dead = false;
         hp = maxHP;
+        mana = maxMana;
+        manaRestoreGap = maxMana;
         onHealthChanged?.Invoke(hp, maxHP);
+        onManaChanged?.Invoke((int)mana, maxMana);
         rb.isKinematic = false;
         playerMesh.SetActive(true);
         playerCollider.gameObject.SetActive(true);
@@ -284,6 +319,33 @@ public class Player : MonoBehaviour, IAnimationDispatch, IHealth, IActor
                 break;
         }
     }
+    public void Teleport(Vector3 position)
+    {
+        StartCoroutine(TeleportSequence(position));
+    }
+    private IEnumerator TeleportSequence(Vector3 position)
+    {
+        isTeleporting = true;
+        Vector3 endPos = position - new Vector3(0f, GetHeight(), 0f);
+        Vector3 startPos = rb.position;
+        rb.useGravity = false;
+        float weight = 0f;
+        float teleportSpeed = 6f;
+        while (weight < 1f)
+        {
+            rb.position = Vector3.Lerp(startPos, endPos, weight);
+            weight += Time.fixedDeltaTime * teleportSpeed;
+            yield return new WaitForFixedUpdate();
+        }
+        rb.position = endPos;
+        rb.useGravity = true;
+        rb.linearVelocity = Vector3.zero;
+        isTeleporting = false;
+    }
+    public bool CanTeleport()
+    {
+        return !isTeleporting;
+    }
     private void SetCameraNoise(float perc)
     {
         Camera.SetNoise(perc);
@@ -294,6 +356,35 @@ public class Player : MonoBehaviour, IAnimationDispatch, IHealth, IActor
     }
     public IHealth GetHealth() => this;
     public GameObject GetGameObject() => gameObject;
+    public IMana GetMana() => this;
+
+    public float GetHeight()
+    {
+        return Mesh.transform.position.y - transform.position.y;
+    }
+    // IMana
+    public bool UseMana(float usedMana)
+    {
+        if (mana >= usedMana)
+        {
+            manaRestoreGap = mana;
+            mana -= usedMana;
+            lastManaUseTime = Time.time;    
+            onManaChanged?.Invoke(mana, maxMana);
+            return true;
+        }
+        else return false;
+    }
+
+    public void AssignOnManaChanged(IMana.OnManaChanged action)
+    {
+        onManaChanged += action;
+    }
+
+    public void RemoveOnManaChanged(IMana.OnManaChanged action)
+    {
+        onManaChanged -= action;
+    }
 
     public PlayerCamera Camera => playerCamera;
     public PlayerAnimation PlayerAnimation => playerAnimation;

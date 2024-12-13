@@ -4,6 +4,7 @@ public class PlayerEquipment : PlayerAction
 {
     [Header("Equipment")]
     [SerializeField] private KeyCode healKey = KeyCode.R;
+    [SerializeField] private KeyCode manaKey = KeyCode.T;
     [SerializeField] private Transform rightHandTransform = null;
     [SerializeField] private Transform leftHandTransform = null;
 
@@ -32,16 +33,26 @@ public class PlayerEquipment : PlayerAction
         blockOther = false;
 
         bool healKeyDown = Input.GetKeyDown(healKey);
+        bool manaKeyDown = Input.GetKeyDown(manaKey);
 
         if (healKeyDown)
         {
             HealWithPotion();
+        }
+        if (manaKeyDown)
+        {
+            RestoreManaWithPotion();
         }
     }
     private void HealWithPotion()
     {
         if (!inventory.HasItem(Inventory.ItemName_HPotion, out Inventory.Item hpotion) || hpotion.amount <= 0) return; // add feedback that not enough potions
         if (master.TryHealFromMax(InternalSettings.HealPotionStrength)) hpotion.amount--;
+    }
+    private void RestoreManaWithPotion()
+    {
+        if (!inventory.HasItem(Inventory.ItemName_MPotion, out Inventory.Item mpotion) || mpotion.amount <= 0) return; // add feedback that not enough potions
+        //if (master.TryHealFromMax(InternalSettings.ManaPotionStrength)) mpotion.amount--;
     }
     // Equipment
     public void AddItem(EItem item, int amount)
@@ -63,7 +74,7 @@ public class PlayerEquipment : PlayerAction
         {
             if (secondaryItem)
             {
-                InternalSettings.GetStoredPrefab(secondaryItem).SetActive(false);
+                Dequip(secondaryItem);
             }
             secondaryItem = item;
             PutItemInHand(item, leftHandTransform);
@@ -85,10 +96,7 @@ public class PlayerEquipment : PlayerAction
     {
         if (secondaryItem == item)
         {
-            if (secondaryItem)
-            {
-                InternalSettings.GetStoredPrefab(secondaryItem).SetActive(false);
-            }
+            InternalSettings.GetStoredPrefab(secondaryItem).SetActive(false);
             item.OnDequip();
             secondaryItem = null;
             onEquippedChanged?.Invoke(item, false);

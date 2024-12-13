@@ -17,7 +17,8 @@ public class ItemPistol : ItemActive
     public override void OnEquip(IActor actor)
     {
         lastTimeShot = Time.time - (shootCooldown / 2f);
-        this.actor = actor;
+        this.actor = actor; 
+        actor.GetAnimator().SetLayerWeight(actor.GetAnimator().GetLayerIndex(AnimationLayer), 1f);
     }
 
     public override void EquippedUpdate()
@@ -26,7 +27,8 @@ public class ItemPistol : ItemActive
     }
     public override void OnDequip()
     {
-        Debug.Log(Name + " dequipped");
+        actor.GetAnimator().SetLayerWeight(actor.GetAnimator().GetLayerIndex(AnimationLayer), 0f);
+        actor = null;
     }
 
     public override void OnInputDown()
@@ -56,7 +58,7 @@ public class ItemPistol : ItemActive
     }
     private void Shoot()
     {
-        if (!actor.BoxCastForward(maxDistance, halfExtents, InternalSettings.CharacterMask,
+        if (!actor.BoxCastForwardAll(maxDistance, halfExtents, InternalSettings.CharacterMask,
             out RaycastHit[] hits)) return;
 
         foreach (RaycastHit hit in hits)

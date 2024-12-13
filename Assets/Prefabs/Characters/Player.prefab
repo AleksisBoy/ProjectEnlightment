@@ -90,6 +90,9 @@ MonoBehaviour:
   radius: 0.35
   maxHP: 100
   reviveTime: 2
+  maxMana: 100
+  manaRestoreTimer: 8
+  manaRestorePerSec: 5
   maxHealingPotions: 3
 --- !u!114 &8870685154985295319
 MonoBehaviour:
@@ -118,6 +121,8 @@ MonoBehaviour:
   groundBoxCenterOffset: {x: 0, y: 0.4, z: 0}
   groundBoxHalfExtents: {x: 0.34, y: 0.02, z: 0.34}
   groundCheckDistance: 0.5
+  minFallVelocity: -9
+  damageMultiplierPerVelocity: 1.3
   vaultRayOffset: {x: 0, y: 0.1, z: 0}
   vaultingDotMin: 0.5
   vaultingCloseDistance: 0.8
@@ -236,6 +241,7 @@ MonoBehaviour:
   priority: 50
   update: 1
   healKey: 114
+  manaKey: 116
   rightHandTransform: {fileID: 4514073784264048509}
   leftHandTransform: {fileID: 8072913990414739458}
 --- !u!1 &2119657537053145771
@@ -1449,16 +1455,32 @@ PrefabInstance:
       value: 18
       objectReference: {fileID: 0}
     - target: {fileID: 9140253385185518857, guid: 8a028bbd35c1bb14e87c755cfa3ad0e8, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 9140253385185518857, guid: 8a028bbd35c1bb14e87c755cfa3ad0e8, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9140253385185518857, guid: 8a028bbd35c1bb14e87c755cfa3ad0e8, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9140253385185518857, guid: 8a028bbd35c1bb14e87c755cfa3ad0e8, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9140253385185518857, guid: 8a028bbd35c1bb14e87c755cfa3ad0e8, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
-      value: -1.8839473
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 9140253385185518857, guid: 8a028bbd35c1bb14e87c755cfa3ad0e8, type: 3}
       propertyPath: m_LocalEulerAnglesHint.y
-      value: -4.552896
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 9140253385185518857, guid: 8a028bbd35c1bb14e87c755cfa3ad0e8, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
-      value: -2.3111095
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 5866666021909216657, guid: 8a028bbd35c1bb14e87c755cfa3ad0e8, type: 3}

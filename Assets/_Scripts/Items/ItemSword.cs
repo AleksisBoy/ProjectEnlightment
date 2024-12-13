@@ -33,6 +33,7 @@ public class ItemSword : ItemActive
     public override void OnEquip(IActor actor)
     {
         this.actor = actor;
+        actor.GetAnimator().SetLayerWeight(actor.GetAnimator().GetLayerIndex(AnimationLayer), 1f);
     }
     public override void EquippedUpdate()
     {
@@ -49,6 +50,8 @@ public class ItemSword : ItemActive
     public override void OnDequip()
     {
         Debug.Log(Name + " dequipped");
+        actor = null;
+        actor.GetAnimator().SetLayerWeight(actor.GetAnimator().GetLayerIndex(AnimationLayer), 0f);
     }
 
     public override void OnInputDown()
