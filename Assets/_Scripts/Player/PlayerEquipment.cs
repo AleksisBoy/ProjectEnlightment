@@ -47,12 +47,12 @@ public class PlayerEquipment : PlayerAction
     private void HealWithPotion()
     {
         if (!inventory.HasItem(Inventory.ItemName_HPotion, out Inventory.Item hpotion) || hpotion.amount <= 0) return; // add feedback that not enough potions
-        if (master.TryHealFromMax(InternalSettings.HealPotionStrength)) hpotion.amount--;
+        if (master.TryHealFromMax(InternalSettings.HealPotionStrength)) inventory.Decrease(hpotion, 1);
     }
     private void RestoreManaWithPotion()
     {
         if (!inventory.HasItem(Inventory.ItemName_MPotion, out Inventory.Item mpotion) || mpotion.amount <= 0) return; // add feedback that not enough potions
-        //if (master.TryHealFromMax(InternalSettings.ManaPotionStrength)) mpotion.amount--;
+        if (master.TryRestoreMana(InternalSettings.ManaPotionRestore)) inventory.Decrease(mpotion, 1);
     }
     // Equipment
     public void AddItem(EItem item, int amount)

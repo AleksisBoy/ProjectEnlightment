@@ -16,6 +16,9 @@ public class Inventory
     public const string ItemName_Money = "Money";
     public const string ItemName_AP = "AbilityPoint";
 
+    public delegate void InventoryChange();
+    private InventoryChange onInventoryChanged;
+
     public void Add(in EItem item, in int amount)
     {
         if (HasItem(item, out Item invItem))
@@ -26,21 +29,29 @@ public class Inventory
         {
             items.Add(new Item(item, amount));
         }
+        onInventoryChanged?.Invoke();
     }
     public void Decrease(in EItem item, in int amount)
     {
         if (!HasItem(item, out Item invItem)) return;
 
-        invItem.amount -= amount;
-        if (invItem.amount <= 0) Remove(ref invItem);
+        Decrease(invItem, amount);
+    }
+    public void Decrease(Item item, in int amount)
+    {
+        item.amount -= amount;
+        //if (item.amount <= 0) Remove(ref item);
+        onInventoryChanged?.Invoke();
     }
     private void AddAmount(ref Item item, in int amount)
     {
         item.amount += amount;
+        onInventoryChanged?.Invoke();
     }
     private void Remove(ref Item invItem)
     {
         items.Remove(invItem);
+        onInventoryChanged?.Invoke();
     }
     public bool HasItem(in Item item)
     {
@@ -79,6 +90,14 @@ public class Inventory
         invItem = null;
         return false;
     }
+    public void AddOnInventoryChanged(InventoryChange action)
+    {
+        onInventoryChanged += action;
+    }
+    public void RemoveOnInventoryChanged(InventoryChange action)
+    {
+        onInventoryChanged -= action;
+    }
     public int ItemCount => items.Count;
     public List<Item> Items => items;
     [Serializable]
@@ -90,6 +109,14 @@ public class Inventory
         {
             this.get = item;
             this.amount = amount;
+        }
+        public static bool operator true(Item item)
+        {
+            return item != null;
+        }
+        public static bool operator false(Item item)
+        {
+            return item == null;
         }
     }
 }

@@ -122,7 +122,7 @@ MonoBehaviour:
   groundBoxHalfExtents: {x: 0.34, y: 0.02, z: 0.34}
   groundCheckDistance: 0.5
   minFallVelocity: -9
-  damageMultiplierPerVelocity: 1.3
+  damageMultiplierPerVelocity: 1.35
   vaultRayOffset: {x: 0, y: 0.1, z: 0}
   vaultingDotMin: 0.5
   vaultingCloseDistance: 0.8
@@ -223,6 +223,8 @@ MonoBehaviour:
   priority: 25
   update: 1
   actionKey: 325
+  item1Key: 49
+  numericKeysCount: 9
   weaponWheel: {fileID: 0}
   timeToOpen: 0.2
   timeScaleWhileOpen: 0.025

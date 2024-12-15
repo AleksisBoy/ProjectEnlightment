@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -5,57 +7,98 @@ using UnityEngine.UI;
 
 public class ItemIconUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
+    [Header("Base")]
     [SerializeField] private Image background = null;
     [SerializeField] private Image icon = null;
-    [SerializeField] private TMP_Text amountText = null;
+    [SerializeField] protected TMP_Text amountText = null;
+    [SerializeField] private bool selectWithPointer = true;
+    [SerializeField] private bool showAmountZero = false;
 
-    private Inventory.Item item;
+    protected Inventory.Item item;
     public Inventory.Item Item => item;
 
     public delegate void OnSelectedChanged();
     private static OnSelectedChanged onSelectedChanged;
 
-    private static ItemIconUI selected = null;
-    public static ItemIconUI Selected
+    private static Dictionary<Type, ItemIconUI> selected = new Dictionary<Type, ItemIconUI>();
+    protected static void SetSelected(Type t, ItemIconUI item)
     {
-        get => selected;
-        set
+        if (!selected.ContainsKey(t)) selected.Add(t, item);
+        else
         {
-            if (value != selected)
-            {
-                if (selected) selected.Deselect();
-                selected = value;
-                if (value) selected.Select();
-                if (onSelectedChanged != null) onSelectedChanged();
-            }
+            DeselectSelected(t);
+            selected[t] = item;
+            if (selected[t]) selected[t].Select();
+            if (onSelectedChanged != null) onSelectedChanged();
         }
     }
+    public static T GetSelected<T>() where T : ItemIconUI
+    {
+        if (!selected.ContainsKey(typeof(T))) return null;
+        return (T)selected[typeof(T)];
+    }
+    public static ItemIconUI GetSelected(Type t)
+    {
+        if (!selected.ContainsKey(t)) return null;
+        return selected[t];
+    }
+    protected static void DeselectSelected(Type t)
+    {
+        if (selected.ContainsKey(t) && selected[t]) selected[t].Deselect();
+    }
+    //private static ItemIconUI selected = null;
+    //public static ItemIconUI Selected
+    //{
+    //    get => selected;
+    //    set
+    //    {
+    //        if (value != selected)
+    //        {
+    //            if (selected) selected.Deselect();
+    //            selected = value;
+    //            if (value) selected.Select();
+    //            if (onSelectedChanged != null) onSelectedChanged();
+    //        }
+    //    }
+    //}
 
-    public void Select()
+    public virtual void Select()
     {
         background.color = InternalSettings.SelectedIconColor;
     }
-    public void Deselect()
+    public virtual void Deselect()
     {
         background.color = InternalSettings.DefaultIconColor;
     }
-    public void OnPointerEnter(PointerEventData eventData)
+    public virtual void OnPointerEnter(PointerEventData eventData)
     {
-        Selected = this;
+        if (!selectWithPointer) return;
+
+        SetSelected(GetType(), this);
     }
-    public void OnPointerExit(PointerEventData eventData)
+    public virtual void OnPointerExit(PointerEventData eventData)
     {
-        Selected = null;
+        if (!selectWithPointer) return;
+
+        SetSelected(GetType(), null);
     }
-    public void SetItem(Inventory.Item item)
+    public virtual void SetItem(Inventory.Item item)
     {
         this.item = item;
-        icon.sprite = item.get.IconSprite;
+        if(item)
+        {
+            icon.gameObject.SetActive(true);
+            icon.sprite = item.get.IconSprite;
+        }
+        else
+        {
+            icon.gameObject.SetActive(false);
+        }
         SetAmount();
     }
-    private void SetAmount()
+    protected virtual void SetAmount()
     {
-        if (item.amount > 0 && !item.get.Unique)
+        if (item != null && !item.get.Unique && ((showAmountZero && item.amount >= 0) || (!showAmountZero && item.amount > 0)))
         {
             amountText.text = item.amount.ToString();
         }
@@ -67,7 +110,7 @@ public class ItemIconUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
     }
     private void OnDisable()
     {
-        if (Selected == this) Selected = null;
+        if (GetSelected(GetType()) == this) SetSelected(GetType(), null);
     }
     // Action
     public static void Assign_OnSelectedChanged(OnSelectedChanged action)

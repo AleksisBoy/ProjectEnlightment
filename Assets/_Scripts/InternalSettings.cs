@@ -6,6 +6,7 @@ public class InternalSettings : MonoBehaviour
 {
     [SerializeField] private GUIStyle debugStyle = GUIStyle.none;
     [SerializeField] private float healPotionStrength = 0.2f;
+    [SerializeField] private float manaPotionRestore = 35;
     [Header("Masks")]
     [SerializeField] private LayerMask characterMask;
     [SerializeField] private LayerMask obstacleLayer;
@@ -25,6 +26,7 @@ public class InternalSettings : MonoBehaviour
     public const string ASCII_TABLE = "!\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}";
     public static GUIStyle DebugStyle => Get.debugStyle;
     public static float HealPotionStrength => Get.healPotionStrength;
+    public static float ManaPotionRestore => Get.manaPotionRestore;
     public static LayerMask CharacterMask => Get.characterMask;
     public static LayerMask ObstacleLayer => Get.obstacleLayer;
     public static LayerMask EnvironmentLayer => Get.environmentLayer;

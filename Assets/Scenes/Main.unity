@@ -23972,6 +23972,10 @@ PrefabInstance:
       propertyPath: debugColl
       value: 
       objectReference: {fileID: 1378303470}
+    - target: {fileID: 8316794966177578458, guid: 5628d4dad5a932a44bc690407a10ff0c, type: 3}
+      propertyPath: suspicionMaxIncrease
+      value: 5
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

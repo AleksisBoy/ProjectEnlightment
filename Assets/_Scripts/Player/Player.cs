@@ -375,7 +375,16 @@ public class Player : MonoBehaviour, IAnimationDispatch, IHealth, IActor, IMana
         }
         else return false;
     }
+    public bool TryRestoreMana(float restoreMana)
+    {
+        if (mana >= maxMana) return false;
 
+        mana += restoreMana;
+        manaRestoreGap = mana;
+        onManaChanged?.Invoke(mana, maxMana);
+
+        return true;
+    }
     public void AssignOnManaChanged(IMana.OnManaChanged action)
     {
         onManaChanged += action;
