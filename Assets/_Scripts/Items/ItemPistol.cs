@@ -9,70 +9,62 @@ public class ItemPistol : ItemActive
     [SerializeField] private float shootCooldown = 0.7f;
     [SerializeField] private Vector3 halfExtents = Vector3.zero;
 
-    private float lastTimeShot = 0f;
-    public override void Init()
+    public override ItemUseData Init()
     {
-        lastTimeShot = 0f;
+        return new PistolUseData();
     }
-    public override void OnEquip(IActor actor)
-    {
-        lastTimeShot = Time.time - (shootCooldown / 2f);
-        this.actor = actor; 
-        actor.GetAnimator().SetLayerWeight(actor.GetAnimator().GetLayerIndex(AnimationLayer), 1f);
-    }
-
-    public override void EquippedUpdate()
-    {
-
-    }
-    public override void OnDequip()
-    {
-        actor.GetAnimator().SetLayerWeight(actor.GetAnimator().GetLayerIndex(AnimationLayer), 0f);
-        actor = null;
-    }
-
-    public override void OnInputDown()
-    {
-        if (!NovUtil.TimeCheck(lastTimeShot, shootCooldown)) return;
-
-        Shoot();
-    }
-
-    public override void OnInputHold()
+    public override void EquippedUpdate(ItemUseData data)
     {
 
     }
 
-    public override void OnInputUp()
+    public override void OnInputDown(ItemUseData data)
+    {
+        PistolUseData pistolData = data as PistolUseData;
+        if (!NovUtil.TimeCheck(pistolData.lastTimeShot, shootCooldown)) return;
+
+        Shoot(pistolData);
+    }
+
+    public override void OnInputHold(ItemUseData data)
     {
 
     }
-    public override void CallEvent(NovUtil.AnimEvent animEvent)
+
+    public override void OnInputUp(ItemUseData data)
+    {
+
+    }
+    public override void CallEvent(ItemUseData data, NovUtil.AnimEvent animEvent)
     {
 
     }
 
-    public override void Disturb()
+    public override void Disturb(ItemUseData data)
     {
 
     }
-    private void Shoot()
+    private void Shoot(PistolUseData data)
     {
-        if (!actor.BoxCastForwardAll(maxDistance, halfExtents, InternalSettings.CharacterMask,
+        if (!data.actor.BoxCastForwardAll(maxDistance, halfExtents, InternalSettings.CharacterMask,
             out RaycastHit[] hits)) return;
 
         foreach (RaycastHit hit in hits)
         {
             IHealth health = hit.transform.GetComponentInParent<IHealth>();
-            if (health == null || health.Equals(actor.GetHealth())) continue;
+            if (health == null || health.Equals(data.actor.GetHealth())) continue;
 
             int damage = (int)(maxDamage * (Mathf.Abs(1f - hit.distance / maxDistance)));
-            health.GetHit(damage, actor.GetGameObject(), out bool died);
+            health.GetHit(damage, data.actor.GetGameObject(), out bool died);
 
             if (died) health.GetAnimator()?.SetTrigger(NovUtil.DiedHash);
         }
-        actor.GetAnimator().SetTrigger(NovUtil.GunshotHash);
-        lastTimeShot = Time.time;
+        data.actor.GetAnimator().SetTrigger(NovUtil.GunshotHash);
+        data.lastTimeShot = Time.time;
     }
 
+    public class PistolUseData : ItemUseData
+    {
+        public float lastTimeShot = 0f;
+    }
 }

@@ -191,7 +191,7 @@ MonoBehaviour:
   blockActionKey: 306
   sheatheActionKey: 102
   frontAssassinationMinDot: 0.5
-  sheathTimer: 0.65
+  sheathTimer: 0.42
 --- !u!114 &3943841550154725332
 MonoBehaviour:
   m_ObjectHideFlags: 0

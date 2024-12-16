@@ -1,4 +1,6 @@
+using System.Collections.Generic;
 using UnityEngine;
+using static ItemActive;
 
 public class PlayerEquipment : PlayerAction
 {
@@ -22,6 +24,8 @@ public class PlayerEquipment : PlayerAction
     public delegate void OnEquippedChanged(ItemActive item, bool equipped);
     private OnEquippedChanged onEquippedChanged;
 
+    private Dictionary<ItemActive, ItemUseData> storedItemData = new Dictionary<ItemActive, ItemUseData>();
+
     public override void Init(params object[] objects)
     {
         base.Init(objects);
@@ -43,6 +47,8 @@ public class PlayerEquipment : PlayerAction
         {
             RestoreManaWithPotion();
         }
+        MainItem?.EquippedUpdate(GetItemUseData(MainItem));
+        SecondaryItem?.EquippedUpdate(GetItemUseData(SecondaryItem));
     }
     private void HealWithPotion()
     {
@@ -65,7 +71,7 @@ public class PlayerEquipment : PlayerAction
         {
             if (mainItem)
             {
-                InternalSettings.GetStoredPrefab(mainItem).SetActive(false);
+                GetItemUseData(mainItem).instance.SetActive(false);
             }
             PutItemInHand(item, rightHandTransform);
             mainItem = item;
@@ -76,28 +82,31 @@ public class PlayerEquipment : PlayerAction
             {
                 Dequip(secondaryItem);
             }
-            secondaryItem = item;
             PutItemInHand(item, leftHandTransform);
+            secondaryItem = item;
         }
-        item.OnEquip(master);
+        item.OnEquip(GetItemUseData(item), master);
         onEquippedChanged?.Invoke(item, true);
     }
     private void PutItemInHand(ItemActive item, Transform handTransform)
     {
-        GameObject itemPrefab = InternalSettings.GetStoredPrefab(item);
-        if (!itemPrefab)
+        ItemUseData itemData = GetItemUseData(item);
+        if (itemData == null)
         {
-            itemPrefab = InternalSettings.SpawnStorePrefab(item, handTransform);
+            itemData = InternalSettings.SpawnItemData(item, handTransform);
+            storedItemData.Add(item, itemData);
+            Debug.Log("created new data for " + item.Name);
         }
-        itemPrefab.SetActive(true);
+        itemData.instance.SetActive(true);
         handTransform.localEulerAngles = item.HandTransformRotation;
     }
     public void Dequip(ItemActive item)
     {
         if (secondaryItem == item)
         {
-            InternalSettings.GetStoredPrefab(secondaryItem).SetActive(false);
-            item.OnDequip();
+            ItemUseData itemData = GetItemUseData(secondaryItem);
+            itemData.instance.SetActive(false);
+            item.OnDequip(itemData);
             secondaryItem = null;
             onEquippedChanged?.Invoke(item, false);
         }
@@ -117,7 +126,40 @@ public class PlayerEquipment : PlayerAction
             Equip(item);
         }
     }
+    public void UpdateMainItemInput(bool down, bool hold, bool up)
+    {
+        if (!MainItem) return;
 
+        UpdateItemInput(MainItem, down, hold, up);
+    }
+    public void UpdateSecondaryItemInput(bool down, bool hold, bool up)
+    {
+        if (!SecondaryItem) return;
+
+        UpdateItemInput(SecondaryItem, down, hold, up);
+    }
+    private void UpdateItemInput(ItemActive item, bool down, bool hold, bool up)
+    {
+        if (down) item.OnInputDown(GetItemUseData(item));
+        if (hold) item.OnInputHold(GetItemUseData(item));
+        if (up) item.OnInputUp(GetItemUseData(item));
+    }
+    public override void ActionDisturbed(CharacterAction disturber)
+    {
+        MainItem?.Disturb(GetItemUseData(MainItem));
+        SecondaryItem?.Disturb(GetItemUseData(SecondaryItem));
+    }
+    public override void CallAnimationEvent(NovUtil.AnimEvent animEvent)
+    {
+        // need to know what hand calls the event
+        MainItem?.CallEvent(GetItemUseData(MainItem), animEvent);
+        SecondaryItem?.CallEvent(GetItemUseData(SecondaryItem),animEvent);
+    }
+    private ItemUseData GetItemUseData(ItemActive item)
+    {
+        if (!storedItemData.ContainsKey(item)) return null;
+        return storedItemData[item];
+    }
     public void AssignOnEquippedChanged(OnEquippedChanged action)
     {
         onEquippedChanged += action;
@@ -126,4 +168,6 @@ public class PlayerEquipment : PlayerAction
     {
         onEquippedChanged -= action;
     }
+    public Transform RightHand => rightHandTransform;
+    public Transform LeftHand => leftHandTransform;
 }

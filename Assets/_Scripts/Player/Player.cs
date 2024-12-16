@@ -101,7 +101,7 @@ public class Player : MonoBehaviour, IAnimationDispatch, IHealth, IActor, IMana
 
         if (Input.GetKeyDown(KeyCode.P))
         {
-            GetHit(10, null, out bool _died);
+            TryRestoreMana(60f);
         }
         if (NovUtil.TimeCheck(lastManaUseTime, manaRestoreTimer))
         {
@@ -319,26 +319,25 @@ public class Player : MonoBehaviour, IAnimationDispatch, IHealth, IActor, IMana
                 break;
         }
     }
-    public void Teleport(Vector3 position)
+    public void Teleport(Vector3 position, float teleportSpeed)
     {
-        StartCoroutine(TeleportSequence(position));
+        StartCoroutine(TeleportSequence(position, teleportSpeed));
     }
-    private IEnumerator TeleportSequence(Vector3 position)
+    private IEnumerator TeleportSequence(Vector3 position, float teleportSpeed)
     {
         isTeleporting = true;
-        Vector3 endPos = position - new Vector3(0f, GetHeight(), 0f);
+        Vector3 endPos = position;
         Vector3 startPos = rb.position;
-        rb.useGravity = false;
+        //rb.useGravity = false;
         float weight = 0f;
-        float teleportSpeed = 6f;
         while (weight < 1f)
         {
             rb.position = Vector3.Lerp(startPos, endPos, weight);
-            weight += Time.fixedDeltaTime * teleportSpeed;
-            yield return new WaitForFixedUpdate();
+            weight += Time.deltaTime * teleportSpeed;
+            yield return null;
         }
         rb.position = endPos;
-        rb.useGravity = true;
+        //rb.useGravity = true;
         rb.linearVelocity = Vector3.zero;
         isTeleporting = false;
     }

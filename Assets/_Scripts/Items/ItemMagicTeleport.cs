@@ -8,87 +8,84 @@ public class ItemMagicTeleport : ItemActive
     [SerializeField] private float maxDistance = 10f;
     [SerializeField] private float minHoldTime = 0.05f;
     [SerializeField] private float hitNormalDistance = 0.4f;
+    [SerializeField] private float teleportSpeed = 8f;
     [SerializeField] private GameObject showTeleportMeshPrefab = null;
+    [SerializeField] private Vector3 boxcastHalfExtents = new Vector3(0.2f, 0.2f, 0.2f);
 
-    private GameObject showTeleportMesh = null;
-
-    private float holdTime = 0f;
-    public override void Init()
+    public override ItemUseData Init()
     {
-        holdTime = 0f;
-        showTeleportMesh = Instantiate(showTeleportMeshPrefab);
-        showTeleportMesh.gameObject.SetActive(false);
+        TeleportUseData data = new TeleportUseData();
+        data.showTeleportMesh = Instantiate(showTeleportMeshPrefab);
+        data.showTeleportMesh.gameObject.SetActive(false);
+        return data;
     }
-    public override void OnEquip(IActor actor)
+    public override void EquippedUpdate(ItemUseData data)
     {
-        this.actor = actor;
-        actor.GetAnimator().SetLayerWeight(actor.GetAnimator().GetLayerIndex(AnimationLayer), 1f);
-    }
-    public override void EquippedUpdate()
-    {
-
-    }
-    public override void OnDequip()
-    {
-        actor.GetAnimator().SetLayerWeight(actor.GetAnimator().GetLayerIndex(AnimationLayer), 0f);
-        actor = null;
     }
 
-    public override void OnInputDown()
+    public override void OnInputDown(ItemUseData data)
     {
-        holdTime = 0f;
-        showTeleportMesh.gameObject.SetActive(true);
-        showTeleportMesh.transform.position = new Vector3(0f, -100f, 0f);
+        TeleportUseData tpData = data as TeleportUseData;
+        tpData.holdTime = 0f;
+        tpData.showTeleportMesh.gameObject.SetActive(true);
+        tpData.showTeleportMesh.transform.position = new Vector3(0f, -100f, 0f);
     }
-    public override void OnInputHold()
+    public override void OnInputHold(ItemUseData data)
     {
-        holdTime += Time.deltaTime;
-        if(holdTime > minHoldTime)
+        TeleportUseData tpData = data as TeleportUseData;
+        tpData.holdTime += Time.deltaTime;
+        if(tpData.holdTime > minHoldTime)
         {
             // freeze time
-            if (actor.BoxCastForward(maxDistance, new Vector3(0.1f, 0.1f, 0.1f), InternalSettings.EnvironmentLayer, out RaycastHit hit, out Vector3 direction))
+            if (tpData.actor.BoxCastForward(maxDistance, boxcastHalfExtents, InternalSettings.EnvironmentLayer, out RaycastHit hit, out Vector3 direction))
             {
-                showTeleportMesh.transform.position = hit.point + hit.normal * hitNormalDistance;//- new Vector3(0f, actor.GetHeight() / 2f, 0f);
+                tpData.showTeleportMesh.transform.position = hit.point + hit.normal * hitNormalDistance;//- new Vector3(0f, actor.GetHeight() / 2f, 0f);
             }
             else
             {
-                showTeleportMesh.transform.position = actor.GetGameObject().transform.position + direction * maxDistance + new Vector3(0f, actor.GetHeight(), 0f);
+                tpData.showTeleportMesh.transform.position = tpData.actor.GetGameObject().transform.position + direction * maxDistance + new Vector3(0f, data.actor.GetHeight(), 0f);
             }
         }
     }
-    public override void OnInputUp()
+    public override void OnInputUp(ItemUseData data)
     {
-        if (holdTime > minHoldTime)
+        TeleportUseData tpData = data as TeleportUseData;
+        if (tpData.holdTime > minHoldTime)
         {
             // launch animation that will then teleport in animation event
-            Teleport();
+            Teleport(data.actor);
         }
-        showTeleportMesh.gameObject.SetActive(false);
+        tpData.showTeleportMesh.gameObject.SetActive(false);
     }
-    private void Teleport()
+    private void Teleport(IActor actor)
     {
         if (!actor.GetMana().UseMana(manaUse)
             || !actor.CanTeleport()) return;
 
-        if (actor.BoxCastForward(maxDistance, new Vector3(0.1f, 0.1f, 0.1f), InternalSettings.EnvironmentLayer, out RaycastHit hit, out Vector3 direction))
+        if (actor.BoxCastForward(maxDistance, boxcastHalfExtents, InternalSettings.EnvironmentLayer, out RaycastHit hit, out Vector3 direction))
         {
-            actor.Teleport(hit.point + hit.normal * hitNormalDistance);
-            //actor.GetGameObject().transform.position = hit.point - direction * hitOffset;
+            actor.Teleport(hit.point + hit.normal * hitNormalDistance,
+                teleportSpeed);
         }
         else
         {
-            actor.Teleport(actor.GetGameObject().transform.position + direction * maxDistance);
-            //actor.GetGameObject().transform.position += direction * maxDistance;
+            actor.Teleport(actor.GetGameObject().transform.position + direction * maxDistance, 
+                teleportSpeed);
         }
     }
-    public override void Disturb()
+    public override void Disturb(ItemUseData data)
     {
 
     }
 
-    public override void CallEvent(NovUtil.AnimEvent combatEvent)
+    public override void CallEvent(ItemUseData data, NovUtil.AnimEvent combatEvent)
     {
 
     }
 
+    public class TeleportUseData : ItemUseData
+    {
+        public GameObject showTeleportMesh = null;
+        public float holdTime = 0f;
+    }
 }

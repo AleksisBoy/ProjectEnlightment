@@ -60,17 +60,9 @@ public class PlayerCombat : PlayerAction
 
         if (sheathed)
         {
-            if (rightHandKeyDown) master.Equipment.MainItem?.OnInputDown();
-            if (rightHandKeyHold) master.Equipment.MainItem?.OnInputHold();
-            if (rightHandKeyUp) master.Equipment.MainItem?.OnInputUp();
-
-            if (leftHandKeyDown) master.Equipment.SecondaryItem?.OnInputDown();
-            if (leftHandKeyHold) master.Equipment.SecondaryItem?.OnInputHold();
-            if (leftHandKeyUp) master.Equipment.SecondaryItem?.OnInputUp();
+            master.Equipment.UpdateMainItemInput(rightHandKeyDown, rightHandKeyHold, rightHandKeyUp);
+            master.Equipment.UpdateSecondaryItemInput(leftHandKeyDown, leftHandKeyHold, leftHandKeyUp);
         }
-
-        master.Equipment.MainItem?.EquippedUpdate();
-        master.Equipment.SecondaryItem?.EquippedUpdate();
     }
     private void SheatheInput(bool sheatheActionKeyHold, bool sheatheActionKeyUp)
     {
@@ -86,19 +78,5 @@ public class PlayerCombat : PlayerAction
     {
         sheathed = state;
         master.Animator.SetBool(NovUtil.SheathedHash, sheathed);
-    }
-
-    public override void ActionDisturbed(CharacterAction disturber)
-    {
-        master.Equipment.MainItem?.Disturb();
-        master.Equipment.SecondaryItem?.Disturb();
-    }
-    public override void CallAnimationEvent(NovUtil.AnimEvent animEvent)
-    {
-        // need to know what hand calls the event
-        master.Equipment.MainItem?.CallEvent(animEvent);
-        master.Equipment.SecondaryItem?.CallEvent(animEvent);
-
-        return;
     }
 }

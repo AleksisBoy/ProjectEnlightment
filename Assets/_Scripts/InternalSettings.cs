@@ -35,8 +35,6 @@ public class InternalSettings : MonoBehaviour
     public static Color SelectedIconColor => Get.selectedIconColor;
     public static Color DefaultIconColor => Get.defaultIconColor;
     public static ItemActive SwordItem => Get.swordItem;
-
-    private Dictionary<ItemActive, GameObject> storedPrefabs = new Dictionary<ItemActive, GameObject>();
     private void Awake()
     {
         if (Get == null) Get = this;
@@ -64,22 +62,11 @@ public class InternalSettings : MonoBehaviour
     {
         return Instantiate(Get.userInterfacePrefab);
     }
-    public static GameObject GetStoredPrefab(ItemActive item)
+    public static ItemActive.ItemUseData SpawnItemData(ItemActive item, Transform parent)
     {
-        if (!Get.storedPrefabs.ContainsKey(item)) return null;
-        return Get.storedPrefabs[item];
-    }
-    public static GameObject SpawnStorePrefab(ItemActive item, Transform parent)
-    {
-        if (Get.storedPrefabs.ContainsKey(item))
-        {
-            Debug.LogError("Already spawned " + item.Name);
-            return null;
-        }
-        GameObject prefab = Instantiate(item.MeshPrefab, parent);
-        Get.storedPrefabs.Add(item, prefab);
-        item.Init();
-        return prefab;
+        ItemActive.ItemUseData data = item.Init();
+        data.instance = Instantiate(item.MeshPrefab, parent);
+        return data;
     }
     private void InitTMP()
     {

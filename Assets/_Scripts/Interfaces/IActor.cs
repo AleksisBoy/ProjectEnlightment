@@ -14,7 +14,7 @@ public interface IActor
     public bool BoxCastForward(float distance, Vector3 halfExtents, LayerMask mask, out RaycastHit hit, out Vector3 direction, QueryTriggerInteraction query = QueryTriggerInteraction.Ignore);
 
     public void ProcessActorData(Data data);
-    public void Teleport(Vector3 position);
+    public void Teleport(Vector3 position, float teleportSpeed);
     public bool CanTeleport();
     public IHealth GetHealth();
     public IMana GetMana();

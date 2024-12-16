@@ -14,96 +14,75 @@ public class ItemSword : ItemActive
     [SerializeField] private float staminaMin = 0.66f;
     [SerializeField] private float staminaMax = 1f;
 
-    private float stamina = 1f;
-
-    private bool isAttacking = false;
-    private bool queueAttack = false;
-    private bool queueWindowOpen = false;
-
-    private float lastAttackTime = 0;
-
-    public override void Init()
+    public override ItemUseData Init()
     {
-        stamina = 1f;
-        lastAttackTime = 0f;
-        isAttacking = false;
-        queueAttack = false;
-        queueWindowOpen = false;
+        return new SwordUseData();
     }
-    public override void OnEquip(IActor actor)
+    public override void EquippedUpdate(ItemUseData data)
     {
-        this.actor = actor;
-        actor.GetAnimator().SetLayerWeight(actor.GetAnimator().GetLayerIndex(AnimationLayer), 1f);
+        StaminaRestoreUpdate(data);
     }
-    public override void EquippedUpdate()
+    private void StaminaRestoreUpdate(ItemUseData data)
     {
-        StaminaRestoreUpdate();
-    }
-    private void StaminaRestoreUpdate()
-    {
-        if (!NovUtil.TimeCheck(lastAttackTime, staminaReloadCooldown)) return;
+        SwordUseData swordData = data as SwordUseData;
+        if (!NovUtil.TimeCheck(swordData.lastAttackTime, staminaReloadCooldown)) return;
 
-        stamina = Mathf.Min(staminaMax, stamina + staminaPerSecond * Time.deltaTime);
-        actor.GetAnimator().SetFloat(NovUtil.CombatStaminaHash, stamina);
-        actor.ProcessActorData(new IActor.Data(IActor.Data.Type.StaminaPerc, GetStaminaPercentage()));
-    }
-    public override void OnDequip()
-    {
-        Debug.Log(Name + " dequipped");
-        actor = null;
-        actor.GetAnimator().SetLayerWeight(actor.GetAnimator().GetLayerIndex(AnimationLayer), 0f);
+        swordData.stamina = Mathf.Min(staminaMax, swordData.stamina + staminaPerSecond * Time.deltaTime);
+        swordData.actor.GetAnimator().SetFloat(NovUtil.CombatStaminaHash, swordData.stamina);
+        swordData.actor.ProcessActorData(new IActor.Data(IActor.Data.Type.StaminaPerc, GetStaminaPercentage(swordData.stamina)));
     }
 
-    public override void OnInputDown()
+    public override void OnInputDown(ItemUseData data)
     {
-        AttackInput();
+        SwordUseData swordData = data as SwordUseData;
+        AttackInput(swordData);
     }
 
-    public override void OnInputHold()
+    public override void OnInputHold(ItemUseData data)
     { 
     }
 
-    public override void OnInputUp()
+    public override void OnInputUp(ItemUseData data)
     {
     }
 
-    private void AttackInput()
+    private void AttackInput(SwordUseData data)
     {
-        if (isAttacking)
+        if (data.isAttacking)
         {
-            queueAttack = queueWindowOpen;
+            data.queueAttack = data.queueWindowOpen;
         }
         else
         {
-            Attack();
+            Attack(data);
         }
     }
-    private void Attack()
+    private void Attack(SwordUseData data)
     {
-        lastAttackTime = Time.time;
-        isAttacking = true;
-        queueWindowOpen = false;
-        queueAttack = false;
-        actor.GetAnimator().SetTrigger(NovUtil.AttackHash);
+        data.lastAttackTime = Time.time;
+        data.isAttacking = true;
+        data.queueWindowOpen = false;
+        data.queueAttack = false;
+        data.actor.GetAnimator().SetTrigger(NovUtil.AttackHash);
     }
-    public void AttackImpact()
+    public void AttackImpact(SwordUseData data)
     {
-        stamina = Mathf.Max(staminaMin, stamina - staminaPerAttack);
-        actor.GetAnimator().SetFloat(NovUtil.CombatStaminaHash, stamina);
-        actor.ProcessActorData(new IActor.Data(IActor.Data.Type.StaminaPerc, GetStaminaPercentage()));
+        data.stamina = Mathf.Max(staminaMin, data.stamina - staminaPerAttack);
+        data.actor.GetAnimator().SetFloat(NovUtil.CombatStaminaHash, data.stamina);
+        data.actor.ProcessActorData(new IActor.Data(IActor.Data.Type.StaminaPerc, GetStaminaPercentage(data.stamina)));
 
-        if (!actor.OverlapBoxForward(attackDistance, halfExtents,
+        if (!data.actor.OverlapBoxForward(attackDistance, halfExtents,
             InternalSettings.CharacterMask, out Collider[] hits)) return;
 
         foreach (Collider hit in hits)
         {
             IHealth health = hit.transform.GetComponentInParent<IHealth>();
-            if (health == null || health.Equals(actor.GetHealth())) continue;
+            if (health == null || health.Equals(data.actor.GetHealth())) continue;
 
-            Vector3 direction = hit.transform.position - actor.GetGameObject().transform.position;
+            Vector3 direction = hit.transform.position - data.actor.GetGameObject().transform.position;
             direction.y = 0f;
             direction.Normalize();
-            float dot = -Vector3.Dot(direction, actor.GetGameObject().transform.forward);
+            float dot = -Vector3.Dot(direction, data.actor.GetGameObject().transform.forward);
 
             /*
             if (dot < -0.6f) // and its not alert
@@ -115,7 +94,7 @@ public class ItemSword : ItemActive
             }
             */
 
-            health.GetHit(damage, actor.GetGameObject(), out bool died);
+            health.GetHit(damage, data.actor.GetGameObject(), out bool died);
             if (!died) return;
 
             /*
@@ -131,49 +110,62 @@ public class ItemSword : ItemActive
             }
         }
     }
-    public void AttackFinish()
+    public void AttackFinish(SwordUseData data)
     {
-        if (!queueAttack)
+        if (!data.queueAttack)
         {
-            isAttacking = false;
-            queueWindowOpen = false;
+            data.isAttacking = false;
+            data.queueWindowOpen = false;
         }
         else
         {
-            Attack();
+            Attack(data);
         }
     }
-    public void OpenNextAttackWindow()
+    public void OpenNextAttackWindow(SwordUseData data)
     {
-        queueWindowOpen = true;
+        data.queueWindowOpen = true;
     }
     public void CombatParry()
     {
         // parry
     }
-    public override void Disturb()
+    public override void Disturb(ItemUseData data)
     {
-        actor.GetAnimator().ResetTrigger(NovUtil.AttackHash);
-        isAttacking = false;
-        queueAttack = false;
+        SwordUseData swordData = data as SwordUseData;
+        swordData.actor.GetAnimator().ResetTrigger(NovUtil.AttackHash);
+        swordData.isAttacking = false;
+        swordData.queueAttack = false;
     }
-    public override void CallEvent(NovUtil.AnimEvent animEvent)
+    public override void CallEvent(ItemUseData data,NovUtil.AnimEvent animEvent)
     {
+        SwordUseData swordData = data as SwordUseData;
         switch (animEvent)
         {
             case NovUtil.AnimEvent.AttackImpact:
-                AttackImpact();
+                AttackImpact(swordData);
                 break;
             case NovUtil.AnimEvent.AttackFinish:
-                AttackFinish();
+                AttackFinish(swordData);
                 break;
             case NovUtil.AnimEvent.OpenAttackWindow:
-                OpenNextAttackWindow();
+                OpenNextAttackWindow(swordData);
                 break;
         }
     }
-    private float GetStaminaPercentage()
+    private float GetStaminaPercentage(float stamina)
     {
         return NovUtil.GetRangePercentage(stamina, staminaMin, staminaMax);
+    }
+    public class SwordUseData : ItemUseData
+    {
+        public float stamina = 1f;
+
+        public bool isAttacking = false;
+        public bool queueAttack = false;
+        public bool queueWindowOpen = false;
+
+        public float lastAttackTime = 0;
+
     }
 }
