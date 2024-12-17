@@ -10,6 +10,7 @@ public class ItemGrenade : ItemActive
     [SerializeField] private float blowRadius = 10f;
     [SerializeField] private float inputDelay = 0.05f;
     [SerializeField] private float throwForce = 10f;
+    [SerializeField] private float raycastDistance = 10f;
 
     public override ItemUseData Init()
     {
@@ -40,7 +41,7 @@ public class ItemGrenade : ItemActive
         if (!grenData.prepare && grenData.holdTime > inputDelay)
         {
             grenData.prepare = true;
-            grenData.actor.GetAnimator().SetTrigger("ThrowPrepare");
+            grenData.actor.GetAnimator().SetTrigger(NovUtil.ThrowPrepareHash);
         }
     }
 
@@ -54,14 +55,24 @@ public class ItemGrenade : ItemActive
     }
     private void ThrowGrenadeStart(GrenadeUseData grenData)
     {
-        grenData.actor.GetAnimator().SetTrigger("Throw");
+        grenData.actor.GetAnimator().SetTrigger(NovUtil.ThrowHash);
         grenData.amount--;
         grenData.actor.ProcessActorData(new IActor.Data(!RightHanded ? IActor.Data.Type.DecrementLeftHand : IActor.Data.Type.DecrementRightHand, 0f));
     }
     private void ThrowGrenade(GrenadeUseData grenData)
     {
+        Vector3 pos = grenData.actor.GetGameObject().transform.position + Vector3.up * grenData.actor.GetHeight();
+        if (grenData.actor.RaycastForward(raycastDistance, InternalSettings.EnvironmentLayer, out RaycastHit hit, out Vector3 dir))
+        {
+            dir = (hit.point - grenData.instance.transform.position).normalized;
+        }
+        else
+        {
+            dir = ((pos + dir * raycastDistance) - grenData.instance.transform.position).normalized;
+        }
+
         Grenade grenade = Instantiate(grenadePrefab, grenData.instance.transform.position, grenData.instance.transform.rotation);
-        grenade.Set(this, grenData, throwForce);
+        grenade.Set(this, dir, throwForce);
     }
     public override void CallEvent(ItemUseData data, NovUtil.AnimEvent animEvent)
     {

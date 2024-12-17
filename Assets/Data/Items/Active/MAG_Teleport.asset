@@ -16,13 +16,16 @@ MonoBehaviour:
   description: teleport
   unique: 1
   maxStack: 1
-  iconSprite: {fileID: 10913, guid: 0000000000000000f000000000000000, type: 0}
+  iconSprite: {fileID: 21300000, guid: 2bed35564534d72448890d348466908c, type: 3}
   rightHanded: 0
   meshPrefab: {fileID: 7748353223968613805, guid: aefe5e55fb3bc2d4bab95c93297d57ff, type: 3}
+  handTransformLocalPosition: {x: 0, y: 0, z: 0}
   handTransformRotation: {x: 0, y: 0, z: 0}
   animationLayer: Teleport
   manaUse: 20
   maxDistance: 10
   minHoldTime: 0.05
   hitNormalDistance: 0.4
+  teleportSpeed: 8
   showTeleportMeshPrefab: {fileID: 7748353223968613805, guid: b0a6882fe986c624d8b2e99872b7eafa, type: 3}
+  boxcastHalfExtents: {x: 0.2, y: 0.2, z: 0.2}

@@ -8,7 +8,8 @@ public interface IHealth
         Stab,
         Fall,
         Explosion,
-        GunShot
+        GunShot,
+        Arrow
     }
     public void GetHit(int damage, DamageType damageType, GameObject actor, out bool died);
 

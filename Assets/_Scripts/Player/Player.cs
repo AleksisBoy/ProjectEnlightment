@@ -367,6 +367,7 @@ public class Player : MonoBehaviour, IAnimationDispatch, IHealth, IActor, IMana
     }
     public IHealth GetHealth() => this;
     public GameObject GetGameObject() => gameObject;
+    public Collider GetCollider() => playerCollider;
     public IMana GetMana() => this;
 
     public float GetHeight()

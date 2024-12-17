@@ -15,6 +15,9 @@ public static class NovUtil
     public static readonly int CombatStaminaHash = Animator.StringToHash("CombatStamina");
     public static readonly int SheathedHash = Animator.StringToHash("Sheathed");
     public static readonly int GunshotHash = Animator.StringToHash("Gunshot");
+    public static readonly int CrossbowShotHash = Animator.StringToHash("CrossbowShot");
+    public static readonly int ThrowHash = Animator.StringToHash("Throw");
+    public static readonly int ThrowPrepareHash = Animator.StringToHash("ThrowPrepare");
 
     public enum AnimEvent
     {

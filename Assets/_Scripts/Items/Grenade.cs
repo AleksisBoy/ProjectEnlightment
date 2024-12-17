@@ -20,7 +20,7 @@ public class Grenade : MonoBehaviour
     {
         foreach (Collider coll in Physics.OverlapSphere(transform.position, grenadeInfo.BlowRadius, InternalSettings.CharacterMask))
         {
-            IHealth health = coll.transform.root.GetComponent<IHealth>();
+            IHealth health = coll.transform.GetComponentInParent<IHealth>();
             if (health == null) continue;
 
             // add collision check
@@ -35,20 +35,11 @@ public class Grenade : MonoBehaviour
         // sound
         Destroy(gameObject);
     }
-    public void Set(ItemGrenade grenadeInfo, ItemGrenade.GrenadeUseData grenData, float force)
+    public void Set(ItemGrenade grenadeInfo, Vector3 direction, float force)
     {
         this.grenadeInfo = grenadeInfo;
-        Vector3 pos = grenData.actor.GetGameObject().transform.position + Vector3.up * grenData.actor.GetHeight();
-        if (grenData.actor.RaycastForward(10f, InternalSettings.EnvironmentLayer, out RaycastHit hit, out Vector3 dir))
-        {
-            dir = (hit.point - grenData.instance.transform.position).normalized;
-        }
-        else
-        {
-            dir = ((pos + dir * 10f) - grenData.instance.transform.position).normalized;
-        }
-        dir.y += 0.1f;
-        rb.AddForce(dir.normalized * force, ForceMode.Impulse);
+        direction.y += 0.1f;
+        rb.AddForce(direction.normalized * force, ForceMode.Impulse);
         triggerTime = Time.time;
     }
     public void SetStatic(ItemGrenade grenadeInfo)

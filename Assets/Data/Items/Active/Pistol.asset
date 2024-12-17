@@ -18,7 +18,7 @@ MonoBehaviour:
 '
   unique: 1
   maxStack: 1
-  iconSprite: {fileID: 21300000, guid: 1ccb6488928865843a767af447faf03f, type: 3}
+  iconSprite: {fileID: 21300000, guid: 92e222b7b757cfb44a21c472965dd13b, type: 3}
   rightHanded: 0
   meshPrefab: {fileID: 177453769048642125, guid: c13354e1c1a4dc84f8ba14dc4e07fff5, type: 3}
   handTransformLocalPosition: {x: 0.00036, y: 0.00071, z: 0.00007}

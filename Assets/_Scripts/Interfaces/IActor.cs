@@ -21,6 +21,7 @@ public interface IActor
     public float GetHeight();
     public Animator GetAnimator();
     public GameObject GetGameObject();
+    public Collider GetCollider();
 
     public struct Data
     {

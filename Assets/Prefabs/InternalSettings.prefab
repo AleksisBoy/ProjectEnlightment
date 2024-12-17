@@ -141,6 +141,8 @@ MonoBehaviour:
     amount: 5
   - get: {fileID: 11400000, guid: f0b9b654ccb78454da7108605c5a3564, type: 2}
     amount: 1
+  - get: {fileID: 11400000, guid: 76604b4994dc73846af26da4ad85ffc1, type: 2}
+    amount: 1
   swordItem: {fileID: 11400000, guid: f0b9b654ccb78454da7108605c5a3564, type: 2}
   userInterfacePrefab: {fileID: 2555585968260613193, guid: df5afbe55f88131408c67b317e84b1f2, type: 3}
   defaultIconColor: {r: 1, g: 1, b: 1, a: 1}
