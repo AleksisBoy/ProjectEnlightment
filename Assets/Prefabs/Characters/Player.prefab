@@ -130,7 +130,7 @@ MonoBehaviour:
   heightRayLength: 4
   vaultingHeightMax: 2
   vaultingHeightMin: 0.5
-  vaultSecondsRange: {x: 0.2, y: 0.75}
+  vaultSecondsRange: {x: 0.15, y: 0.7}
   jumpKey: 32
   sprintKey: 304
   crouchKey: 99
@@ -153,6 +153,9 @@ MonoBehaviour:
   noiseAmplitudeRange: {x: 0, y: 1}
   noiseFrequencyRange: {x: 0, y: 4}
   minNoise: 0.14
+  explosionNoiseMaxDuration: 0.5
+  explosionNoiseAmplitude: 1
+  explosionNoiseFrequency: 4
 --- !u!114 &358649362085444232
 MonoBehaviour:
   m_ObjectHideFlags: 0

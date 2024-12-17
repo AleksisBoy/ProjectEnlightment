@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using static ItemActive;
+using static Inventory;
 
 public class PlayerEquipment : PlayerAction
 {
@@ -67,6 +68,14 @@ public class PlayerEquipment : PlayerAction
     }
     public void Equip(ItemActive item)
     {
+        if (inventory.HasItem(item, out Inventory.Item invItem))
+        {
+            Equip(invItem);
+        }
+    }
+    public void Equip(Item invItem)
+    {
+        ItemActive item = invItem.get as ItemActive;
         if (item.RightHanded)
         {
             if (mainItem)
@@ -85,7 +94,9 @@ public class PlayerEquipment : PlayerAction
             PutItemInHand(item, leftHandTransform);
             secondaryItem = item;
         }
-        item.OnEquip(GetItemUseData(item), master);
+        ItemUseData itemData = GetItemUseData(item);
+        itemData.amount = invItem.amount;
+        item.OnEquip(itemData, master);
         onEquippedChanged?.Invoke(item, true);
     }
     private void PutItemInHand(ItemActive item, Transform handTransform)
@@ -98,6 +109,7 @@ public class PlayerEquipment : PlayerAction
             Debug.Log("created new data for " + item.Name);
         }
         itemData.instance.SetActive(true);
+        handTransform.localPosition = item.HandTransformLocalPosition;
         handTransform.localEulerAngles = item.HandTransformRotation;
     }
     public void Dequip(ItemActive item)
@@ -115,13 +127,13 @@ public class PlayerEquipment : PlayerAction
             Debug.Log("Cannot dequip " + item.Name);
         }
     }
-    public void EquipToggle(ItemActive item)
+    public void EquipToggle(Item item)
     {
-        if (secondaryItem == item)
+        if (secondaryItem == item.get)
         {
-            Dequip(item);
+            Dequip(item.get as ItemActive);
         }
-        else if (secondaryItem != item)
+        else if (secondaryItem != item.get)
         {
             Equip(item);
         }

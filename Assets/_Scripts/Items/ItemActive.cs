@@ -3,9 +3,10 @@ using UnityEngine;
 
 public abstract class ItemActive : EItem
 {
-    [Header("General")]
+    [Header("Active")]
     [SerializeField] private bool rightHanded = true;
     [SerializeField] private GameObject meshPrefab = null;
+    [SerializeField] private Vector3 handTransformLocalPosition = Vector3.zero;
     [SerializeField] private Vector3 handTransformRotation = Vector3.zero;
     [SerializeField] private string animationLayer = "LAYER";
 
@@ -31,6 +32,7 @@ public abstract class ItemActive : EItem
 
     public bool RightHanded => rightHanded;
     public GameObject MeshPrefab => meshPrefab;
+    public Vector3 HandTransformLocalPosition => handTransformLocalPosition;
     public Vector3 HandTransformRotation => handTransformRotation;
     public string AnimationLayer => animationLayer;
 
@@ -38,6 +40,6 @@ public abstract class ItemActive : EItem
     {
         public IActor actor;
         public GameObject instance;
-
+        public int amount = 0;
     }
 }

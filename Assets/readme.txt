@@ -5,6 +5,7 @@ Credits:
 		Outline shader: https://github.com/minsin56/HDRP-Outline
 		"Revolver" (https://skfb.ly/pqNG6) by Mik Santos is licensed under Creative Commons Attribution (http://creativecommons.org/licenses/by/4.0/).
 		Stone Texture: https://unblast.com/5-free-seamless-stone-textures-jpg/
+		Explosion VFX: https://assetstore.unity.com/packages/vfx/particles/fire-explosions/fx-explosion-pack-30102
 	Fonts:
 		Black Chancery: https://www.dafont.com/black-chancery.font?l[]=10&l[]=1
 	Scripts:

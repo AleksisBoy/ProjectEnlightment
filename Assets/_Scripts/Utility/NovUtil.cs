@@ -27,7 +27,8 @@ public static class NovUtil
         TurningRight180Finish,
         TurningLeft90Finish,
         TurningLeft180Finish,
-        GetHitFinish
+        GetHitFinish,
+        GrenadeThrown
     }
     public static T GetClosestFromArray<T>(Vector3 position, in T[] list) where T : Component
     {
@@ -140,6 +141,10 @@ public static class NovUtil
     public static bool TimeCheck(float lastTime, float timer)
     {
         return Time.time - lastTime >= timer;
+    }
+    public static bool TimeCheck(float? lastTime, float timer)
+    {
+        return lastTime != null && Time.time - lastTime >= timer;
     }
     public static RaycastHit[] SortHitsByDistance(RaycastHit[] hits)
     {

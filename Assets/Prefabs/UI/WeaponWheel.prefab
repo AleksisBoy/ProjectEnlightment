@@ -261,6 +261,8 @@ MonoBehaviour:
   quickSlotGrid: {fileID: 5745489663732061109}
   hpotionIcon: {fileID: 2450512348121379412}
   mpotionIcon: {fileID: 9099133119650570391}
+  excludeList:
+  - {fileID: 11400000, guid: f0b9b654ccb78454da7108605c5a3564, type: 2}
 --- !u!1 &706978208417060218
 GameObject:
   m_ObjectHideFlags: 0

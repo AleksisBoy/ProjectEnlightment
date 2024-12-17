@@ -13,7 +13,7 @@ public abstract class EItem : ScriptableObject
     private void OnValidate()
     {
         if (unique) maxStack = 1;
-        else maxStack = Mathf.Min(maxStack, 1);
+        //else maxStack = Mathf.Min(maxStack, 1);
     }
     public string Name => itemName;
     public string Description => description;

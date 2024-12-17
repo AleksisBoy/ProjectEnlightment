@@ -94,7 +94,7 @@ public class ItemSword : ItemActive
             }
             */
 
-            health.GetHit(damage, data.actor.GetGameObject(), out bool died);
+            health.GetHit(damage, IHealth.DamageType.Stab, data.actor.GetGameObject(), out bool died);
             if (!died) return;
 
             /*

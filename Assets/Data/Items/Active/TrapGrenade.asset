@@ -1,0 +1,30 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 69bc4548f04c4b94abf5bbc77c532778, type: 3}
+  m_Name: TrapGrenade
+  m_EditorClassIdentifier: 
+  itemName: Trap Grenade
+  description: grenade
+  unique: 0
+  maxStack: 10
+  iconSprite: {fileID: 21300000, guid: 65177e021e9bab843a95a7423d6ed54d, type: 3}
+  rightHanded: 0
+  meshPrefab: {fileID: 8295139207976453238, guid: 43c92cf146ce2a948ade1aaa1a6b66db, type: 3}
+  handTransformLocalPosition: {x: 0.000097, y: 0.000603, z: 0.000203}
+  handTransformRotation: {x: 15.263573, y: 171.75134, z: 78.725464}
+  animationLayer: Grenade
+  grenadePrefab: {fileID: 5805150094018365737, guid: 3578bc28421fe9d469835cdec43779db, type: 3}
+  triggerDuration: 0
+  maxDamage: 80
+  blowRadius: 4
+  inputDelay: 0.05
+  throwForce: 100

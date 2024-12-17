@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class Dummy : MonoBehaviour, IHealth
 {
-    public void GetHit(int damage, GameObject actor, out bool died)
+    public void GetHit(int damage, IHealth.DamageType dType, GameObject actor, out bool died)
     {
         died = true;
         Destroy(gameObject);

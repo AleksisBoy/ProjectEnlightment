@@ -1,5 +1,6 @@
 using UnityEngine;
 using Unity.Cinemachine;
+using System.Collections;
 
 public class PlayerCamera : PlayerAction
 {
@@ -10,10 +11,16 @@ public class PlayerCamera : PlayerAction
     [SerializeField] private Vector2 noiseFrequencyRange = new Vector2(0f, 2f);
     [Range(0f, 1f)]
     [SerializeField] private float minNoise = 0.1f;
+    [SerializeField] private float explosionNoiseMaxDuration = 0.5f;
+    [SerializeField] private float explosionNoiseAmplitude = 1f;
+    [SerializeField] private float explosionNoiseFrequency = 4f;
 
     private CinemachinePanTilt panTilt = null;
     private CinemachineInputAxisController axisController = null;
     private CinemachineBasicMultiChannelPerlin noise = null;
+
+    private bool explosionNoiseOn = false;
+    private float lastExplosionNoiseTime = 0f;
 
     public CinemachineCamera Get => cineCamera;
 
@@ -82,6 +89,33 @@ public class PlayerCamera : PlayerAction
         Quaternion rotation = Quaternion.LookRotation(direction.normalized);
         SetRotation(Quaternion.Slerp(cineCamera.transform.rotation, rotation, smoothSpeed * Time.deltaTime));
     }
+    public void StartExplosionNoise(float distanceToExplosion)
+    {
+        if (explosionNoiseOn)
+        {
+            lastExplosionNoiseTime = Time.time;
+        }
+        else
+        {
+            StartCoroutine(ExplosionNoise(distanceToExplosion));
+        }
+    }
+    private IEnumerator ExplosionNoise(float distanceToExplosion)
+    {
+        explosionNoiseOn = true;
+
+        // scale noise to distance to explosion
+
+        lastExplosionNoiseTime = Time.time;
+        noise.AmplitudeGain = explosionNoiseAmplitude;
+        noise.FrequencyGain = explosionNoiseFrequency;
+        while(!NovUtil.TimeCheck(lastExplosionNoiseTime, explosionNoiseMaxDuration))
+        {
+            yield return null;
+        }
+
+        explosionNoiseOn = false;
+    }
     public void SetRotation(Quaternion rotation)
     {
         cineCamera.transform.rotation = rotation;
@@ -91,6 +125,8 @@ public class PlayerCamera : PlayerAction
     }
     public void SetNoise(float weight)
     {
+        if (explosionNoiseOn) return;
+
         weight = Mathf.Max(minNoise, Mathf.Clamp01(weight));
         noise.AmplitudeGain = Mathf.Lerp(noiseAmplitudeRange.x, noiseAmplitudeRange.y, weight);
         noise.FrequencyGain = Mathf.Lerp(noiseFrequencyRange.x, noiseFrequencyRange.y, weight);

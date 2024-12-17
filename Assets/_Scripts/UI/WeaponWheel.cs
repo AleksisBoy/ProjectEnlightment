@@ -12,6 +12,7 @@ public class WeaponWheel : MonoBehaviour
     [SerializeField] private HorizontalLayoutGroup quickSlotGrid = null;
     [SerializeField] private ItemIconUI hpotionIcon = null;
     [SerializeField] private ItemIconUI mpotionIcon = null;
+    [SerializeField] private List<EItem> excludeList = new List<EItem>();
 
     private List<ItemIconUI> icons = new List<ItemIconUI>();
     private List<ItemQuickSlotUI> quickSlots = new List<ItemQuickSlotUI>();
@@ -64,7 +65,7 @@ public class WeaponWheel : MonoBehaviour
         int passiveCount = 0;
         for (int i = 0; i < items.Count; i++)
         {
-            if (items[i].get is not ItemActive)
+            if (items[i].get is not ItemActive || excludeList.Contains(items[i].get))
             {
                 passiveCount++;
                 continue;

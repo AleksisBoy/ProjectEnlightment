@@ -3,26 +3,24 @@ using UnityEngine;
 public class ExplosionTrap : PickupObject
 {
     [Header("Trap")]
-    [SerializeField] private int maxDamage = 80;
-    [SerializeField] private float damageScatterDistance = 5f;
+    [SerializeField] private ItemGrenade explosiveInfo = null;
+    [SerializeField] private Grenade explosive = null;
+    [SerializeField] private EItem pickupItem = null;
 
     private bool working = true;
     private bool loaded = true;
+    private void Start()
+    {
+        explosive?.SetStatic(explosiveInfo);
+    }
     public void ActivateTrap()
     {
         if (!loaded || !working) return;
+
+        explosive?.Explode();
+
         loaded = false;
         working = false;
-
-        foreach(Collider coll in Physics.OverlapSphere(transform.position, damageScatterDistance, InternalSettings.CharacterMask))
-        {
-            IHealth health = coll.transform.root.GetComponent<IHealth>();
-            if (health == null) continue;
-
-            float distance = Vector3.Distance(transform.position, coll.transform.position);
-            float perc = Mathf.Abs(1f - (distance / damageScatterDistance));
-            health.GetHit((int)(maxDamage * perc), gameObject, out bool died);
-        }
         enabled = false;
     }
     public void DeactivateTrap()
@@ -36,6 +34,7 @@ public class ExplosionTrap : PickupObject
         DeactivateTrap();
         loaded = false;
         enabled = false;
-        // Give player that item (grenade or other)
+        player.AddItem(pickupItem, 1);
+        Destroy(explosive.gameObject);
     }
 }

@@ -21,6 +21,7 @@ MonoBehaviour:
   iconSprite: {fileID: 21300000, guid: 1ccb6488928865843a767af447faf03f, type: 3}
   rightHanded: 0
   meshPrefab: {fileID: 177453769048642125, guid: c13354e1c1a4dc84f8ba14dc4e07fff5, type: 3}
+  handTransformLocalPosition: {x: 0.00036, y: 0.00071, z: 0.00007}
   handTransformRotation: {x: 311.39728, y: 293.31012, z: 13.010697}
   animationLayer: Pistol
   maxDamage: 80

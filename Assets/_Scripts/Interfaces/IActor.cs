@@ -26,7 +26,9 @@ public interface IActor
     {
         public enum Type
         {
-            StaminaPerc
+            StaminaPerc,
+            DecrementLeftHand,
+            DecrementRightHand
         }
         public Type type;
         public float value;

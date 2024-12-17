@@ -240,10 +240,16 @@ public class Player : MonoBehaviour, IAnimationDispatch, IHealth, IActor, IMana
         }
     }
     // Health
-    public void GetHit(int damage, GameObject actor, out bool died)
+    public void GetHit(int damage, IHealth.DamageType damageType, GameObject actor, out bool died)
     {
         died = false;
         hp -= damage;
+        switch (damageType)
+        {
+            case IHealth.DamageType.Explosion:
+                Camera.StartExplosionNoise(Vector3.Distance(transform.position, actor.transform.position));
+                break;
+        }
         if (hp <= 0)
         {
             died = true;
@@ -316,6 +322,12 @@ public class Player : MonoBehaviour, IAnimationDispatch, IHealth, IActor, IMana
         {
             case IActor.Data.Type.StaminaPerc:
                 SetCameraNoise(data.value);
+                break;
+            case IActor.Data.Type.DecrementLeftHand:
+                Equipment.Inventory.Decrease(Equipment.SecondaryItem, 1);
+                break;
+            case IActor.Data.Type.DecrementRightHand:
+                Equipment.Inventory.Decrease(Equipment.MainItem, 1);
                 break;
         }
     }

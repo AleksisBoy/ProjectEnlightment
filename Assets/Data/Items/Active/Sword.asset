@@ -19,6 +19,7 @@ MonoBehaviour:
   iconSprite: {fileID: 21300000, guid: b2d1785a160a47c46845b034c17b4258, type: 3}
   rightHanded: 1
   meshPrefab: {fileID: 8295139207976453238, guid: 34a37f5629823994bb6534993b7dcc7b, type: 3}
+  handTransformLocalPosition: {x: 0.000088, y: 0.000552, z: 0.00027}
   handTransformRotation: {x: 339.37204, y: 270.46936, z: 258.54376}
   animationLayer: Base Layer
   attackDistance: 1.5

@@ -423,7 +423,7 @@ public class Rookie : AIAgent, IHealth, IAnimationDispatch
             float dot = Vector3.Dot(transform.forward, (player.transform.position - transform.position).normalized);
             if (dot > 0.7f && Vector3.Distance(transform.position, player.transform.position) < closeDistance)
             {
-                player.GetHit(18, gameObject, out bool died);
+                player.GetHit(18, IHealth.DamageType.Stab, gameObject, out bool died);
                 if (died) enabled = false;
             }
             return Node.Status.SUCCESS;
@@ -463,7 +463,7 @@ public class Rookie : AIAgent, IHealth, IAnimationDispatch
         animator.SetFloat(NovUtil.SpeedHash, NovUtil.MoveTowards(animator.GetFloat(NovUtil.SpeedHash), speed_animator, Time.deltaTime * 5f));
     }
 
-    public void GetHit(int damage, GameObject actor, out bool died)
+    public void GetHit(int damage, IHealth.DamageType dType, GameObject actor, out bool died)
     {
         died = false;
         if (!enabled) return;

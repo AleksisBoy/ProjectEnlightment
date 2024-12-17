@@ -267,7 +267,7 @@ public class PlayerMovement : PlayerAction
                 damage *= damageMultiplierPerVelocity;
             }
             Debug.Log(damage);
-            master.GetHit((int)damage, null, out bool died);
+            master.GetHit((int)damage, IHealth.DamageType.Fall, null, out bool died);
         }
     }
     private void Crouch()

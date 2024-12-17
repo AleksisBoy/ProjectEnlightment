@@ -59,10 +59,10 @@ public class PlayerWeaponWheel : PlayerAction
     }
     private void CloseWeaponWheel()
     {
-        ItemActive itemActive = ItemIconUI.GetSelected(typeof(ItemIconUI))?.Item.get as ItemActive;
-        if (itemActive)
+        Inventory.Item item = ItemIconUI.GetSelected<ItemIconUI>()?.Item;
+        if (item != null && item.get as ItemActive)
         {
-            master.Equipment.EquipToggle(itemActive);
+            master.Equipment.EquipToggle(item);
         }
         wheelActive = false;
         weaponWheel.gameObject.SetActive(false);
@@ -84,7 +84,7 @@ public class PlayerWeaponWheel : PlayerAction
         if (!wheelActive)
         {
             Inventory.Item item = weaponWheel.GetItemInQuickSlot(slot);
-            if (item) master.Equipment.EquipToggle(item.get as ItemActive);
+            if (item) master.Equipment.EquipToggle(item);
         }
     }
 }
