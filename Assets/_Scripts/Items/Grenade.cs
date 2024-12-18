@@ -8,6 +8,7 @@ public class Grenade : MonoBehaviour
 
     private ItemGrenade grenadeInfo = null;
     private float? triggerTime = null;
+    private IActor actor = null;
 
     private void Update()
     {
@@ -28,16 +29,18 @@ public class Grenade : MonoBehaviour
             float distance = Vector3.Distance(transform.position, coll.transform.position);
             float perc = Mathf.Abs(1f - (distance / grenadeInfo.BlowRadius));
             health.GetHit((int)(grenadeInfo.MaxDamage * perc), IHealth.DamageType.Explosion, gameObject, out bool died);
-            if (died) health.GetAnimator().SetTrigger(NovUtil.DiedHash);
+            if (died) health.GetAnimator()?.SetTrigger(NovUtil.DiedHash);
+            actor?.ProcessActorData(new IActor.Data(IActor.Data.Type.HitReport, 0f));
         }
         GameObject vfx = Instantiate(explosionVFX, transform.position, Quaternion.identity);
         Destroy(vfx, 5f);
         // sound
         Destroy(gameObject);
     }
-    public void Set(ItemGrenade grenadeInfo, Vector3 direction, float force)
+    public void Set(ItemGrenade grenadeInfo, IActor actor, Vector3 direction, float force)
     {
         this.grenadeInfo = grenadeInfo;
+        this.actor = actor;
         direction.y += 0.1f;
         rb.AddForce(direction.normalized * force, ForceMode.Impulse);
         triggerTime = Time.time;

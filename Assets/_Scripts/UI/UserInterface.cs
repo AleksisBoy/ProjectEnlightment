@@ -16,9 +16,13 @@ public class UserInterface : MonoBehaviour
     }
     public void SetPlayer(Player player)
     {
+        if (this.player) return;
+
         this.player = player;
         player.AssignOnHealthChanged(OnHealthChanged);
         player.AssignOnManaChanged(OnManaChanged);
+        player.Equipment.AssignOnEquippedChanged(OnEquippedChanged);
+        player.Equipment.Inventory.AssignOnInventoryChanged(OnInventoryChanged);
     }
     // Stats Bar
     private void OnHealthChanged(int hp, int maxHP)
@@ -28,6 +32,21 @@ public class UserInterface : MonoBehaviour
     private void OnManaChanged(float mana, float maxMana)
     {
         statsBar.SetMana(mana, maxMana);
+    }
+    public void OnEquippedChanged(Inventory.Item item, bool equipped)
+    {
+        if (equipped && !(item.get as ItemActive).RightHanded)
+        {
+            statsBar.SetCurrentEquippedIcon(item);
+        }
+        else
+        {
+            statsBar.SetCurrentEquippedIcon(null);
+        }
+    }
+    private void OnInventoryChanged()
+    {
+        statsBar.UpdateCurrentEquippedIcon();
     }
     // Crosshair
     public void AddCrosshair(Crosshair.Type type)
@@ -54,6 +73,10 @@ public class UserInterface : MonoBehaviour
         }
         Debug.Log("Did not find crosshair " + type.ToString());
     }
+    public void ShowHitCrosshair()
+    {
+        crosshair.ShowHitDisplay();
+    }
     // Pickup Log
     public void ItemPickedUp(EItem item, int amount)
     {
@@ -61,6 +84,11 @@ public class UserInterface : MonoBehaviour
     }
     private void OnDestroy()
     {
-        if (player) player.RemoveOnHealthChanged(OnHealthChanged);
+        if (!player) return;
+
+        player.RemoveOnHealthChanged(OnHealthChanged);
+        player.RemoveOnManaChanged(OnManaChanged);
+        player.Equipment.RemoveOnEquippedChanged(OnEquippedChanged);
+        player.Equipment.Inventory.RemoveOnInventoryChanged(OnInventoryChanged);
     }
 }

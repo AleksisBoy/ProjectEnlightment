@@ -8,6 +8,7 @@ public class Missile : MonoBehaviour
 
     private float spawnTime = 0f;
     private int damage = 0;
+    private IActor actor;
     private void Update()
     {
         if (NovUtil.TimeCheck(spawnTime, lifetime))
@@ -15,8 +16,9 @@ public class Missile : MonoBehaviour
             Destroy(gameObject);
         }
     }
-    public void Set(Vector3 direction, float force, int damage, params Collider[] exceptions)
+    public void Set(IActor actor, Vector3 direction, float force, int damage, params Collider[] exceptions)
     {
+        this.actor = actor;
         foreach (Collider exception in exceptions)
         {
             Physics.IgnoreCollision(coll, exception);
@@ -37,6 +39,7 @@ public class Missile : MonoBehaviour
 
         health.GetHit(damage, IHealth.DamageType.Arrow, gameObject, out bool died);
         if (died) health.GetAnimator()?.SetTrigger(NovUtil.DiedHash);
+        actor?.ProcessActorData(new IActor.Data(IActor.Data.Type.HitReport, 0));
         return true;
     }
 }

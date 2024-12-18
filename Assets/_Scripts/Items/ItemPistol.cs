@@ -56,6 +56,7 @@ public class ItemPistol : ItemActive
 
             int damage = (int)(maxDamage * (Mathf.Abs(1f - hit.distance / maxDistance)));
             health.GetHit(damage, IHealth.DamageType.GunShot, data.actor.GetGameObject(), out bool died);
+            data.actor.ProcessActorData(new IActor.Data(IActor.Data.Type.HitReport));
 
             if (died) health.GetAnimator()?.SetTrigger(NovUtil.DiedHash);
         }

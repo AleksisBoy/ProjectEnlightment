@@ -6,9 +6,25 @@ using UnityEngine.UI;
 public class Crosshair : MonoBehaviour
 {
     [SerializeField] private Image image = null;
+    [SerializeField] private Image hitDisplayImage = null;
+    [SerializeField] private float hitDisplayTimer = 0.5f;
+
+    private float lastHitDisplayTime = -5f;
 
     private List<CrossData> current = new List<CrossData>();
 
+    private void Update()
+    {
+        if (hitDisplayImage.enabled && NovUtil.TimeCheck(lastHitDisplayTime, hitDisplayTimer))
+        {
+            hitDisplayImage.enabled = false;
+        }
+    }
+    public void ShowHitDisplay()
+    {
+        lastHitDisplayTime = Time.time;
+        hitDisplayImage.enabled = true;
+    }
     public void Add(CrossData unit)
     {
         if (!current.Contains(unit)) current.Add(unit);
@@ -40,7 +56,6 @@ public class Crosshair : MonoBehaviour
         image.rectTransform.sizeDelta = unit.size;
         image.rectTransform.anchoredPosition = unit.offset;
     }
-
     // Data
     public enum Type
     {
@@ -57,5 +72,6 @@ public class Crosshair : MonoBehaviour
         public Vector2 size;
         public Vector2 offset;
         public int priority;
+        public bool isAddition;
     }
 }

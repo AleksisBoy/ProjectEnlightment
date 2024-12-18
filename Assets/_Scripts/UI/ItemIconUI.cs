@@ -46,21 +46,6 @@ public class ItemIconUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
     {
         if (selected.ContainsKey(t) && selected[t]) selected[t].Deselect();
     }
-    //private static ItemIconUI selected = null;
-    //public static ItemIconUI Selected
-    //{
-    //    get => selected;
-    //    set
-    //    {
-    //        if (value != selected)
-    //        {
-    //            if (selected) selected.Deselect();
-    //            selected = value;
-    //            if (value) selected.Select();
-    //            if (onSelectedChanged != null) onSelectedChanged();
-    //        }
-    //    }
-    //}
 
     public virtual void Select()
     {
@@ -94,9 +79,9 @@ public class ItemIconUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
         {
             icon.gameObject.SetActive(false);
         }
-        SetAmount();
+        UpdateAmount();
     }
-    protected virtual void SetAmount()
+    public virtual void UpdateAmount()
     {
         if (item != null && !item.get.Unique && ((showAmountZero && item.amount >= 0) || (!showAmountZero && item.amount > 0)))
         {

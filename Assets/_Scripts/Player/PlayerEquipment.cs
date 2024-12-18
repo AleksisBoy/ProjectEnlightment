@@ -22,7 +22,7 @@ public class PlayerEquipment : PlayerAction
     private ItemActive secondaryItem = null;
     public ItemActive SecondaryItem => secondaryItem;
 
-    public delegate void OnEquippedChanged(ItemActive item, bool equipped);
+    public delegate void OnEquippedChanged(Item item, bool equipped);
     private OnEquippedChanged onEquippedChanged;
 
     private Dictionary<ItemActive, ItemUseData> storedItemData = new Dictionary<ItemActive, ItemUseData>();
@@ -65,6 +65,20 @@ public class PlayerEquipment : PlayerAction
     public void AddItem(EItem item, int amount)
     {
         inventory.Add(item, amount);
+        if(item == secondaryItem)
+        {
+            ItemUseData itemData = GetItemUseData(secondaryItem);
+            itemData.amount += amount;
+        }
+    }
+    public void Decrease(EItem item, int amount)
+    {
+        inventory.Decrease(item, amount);
+        if (item == secondaryItem)
+        {
+            ItemUseData itemData = GetItemUseData(secondaryItem);
+            itemData.amount -= amount;
+        }
     }
     public void Equip(ItemActive item)
     {
@@ -87,9 +101,9 @@ public class PlayerEquipment : PlayerAction
         }
         else
         {
-            if (secondaryItem)
+            if (secondaryItem && inventory.HasItem(secondaryItem, out Item secInvItem))
             {
-                Dequip(secondaryItem);
+                Dequip(secInvItem);
             }
             PutItemInHand(item, leftHandTransform);
             secondaryItem = item;
@@ -97,7 +111,7 @@ public class PlayerEquipment : PlayerAction
         ItemUseData itemData = GetItemUseData(item);
         itemData.amount = invItem.amount;
         item.OnEquip(itemData, master);
-        onEquippedChanged?.Invoke(item, true);
+        onEquippedChanged?.Invoke(invItem, true);
     }
     private void PutItemInHand(ItemActive item, Transform handTransform)
     {
@@ -106,21 +120,21 @@ public class PlayerEquipment : PlayerAction
         {
             itemData = InternalSettings.SpawnItemData(item, handTransform);
             storedItemData.Add(item, itemData);
-            Debug.Log("created new data for " + item.Name);
         }
         itemData.instance.SetActive(true);
         handTransform.localPosition = item.HandTransformLocalPosition;
         handTransform.localEulerAngles = item.HandTransformRotation;
     }
-    public void Dequip(ItemActive item)
+    public void Dequip(Item invIitem)
     {
+        ItemActive item = invIitem.get as ItemActive;
         if (secondaryItem == item)
         {
             ItemUseData itemData = GetItemUseData(secondaryItem);
             itemData.instance.SetActive(false);
             item.OnDequip(itemData);
             secondaryItem = null;
-            onEquippedChanged?.Invoke(item, false);
+            onEquippedChanged?.Invoke(invIitem, false);
         }
         else
         {
@@ -131,7 +145,7 @@ public class PlayerEquipment : PlayerAction
     {
         if (secondaryItem == item.get)
         {
-            Dequip(item.get as ItemActive);
+            Dequip(item);
         }
         else if (secondaryItem != item.get)
         {

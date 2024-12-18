@@ -10,6 +10,7 @@ public class ItemCrossbow : ItemActive
     [SerializeField] private Missile missilePrefab = null;
     [SerializeField] private float missileForce = 20f;
     [SerializeField] private float raycastDistance = 10f;
+
     public override ItemUseData Init()
     {
         return new CrossbowUseData();
@@ -19,6 +20,8 @@ public class ItemCrossbow : ItemActive
     }
     public override void OnInputDown(ItemUseData data)
     {
+        if (data.amount <= 0) return;
+
         CrossbowUseData crossData = data as CrossbowUseData;
         if (!NovUtil.TimeCheck(crossData.lastTimeShot, shootCooldown)) return;
 
@@ -38,10 +41,11 @@ public class ItemCrossbow : ItemActive
         }
 
         Missile missile = Instantiate(missilePrefab, data.instance.transform.position, data.instance.transform.rotation);
-        missile.Set(dir.normalized, missileForce, damage, data.actor.GetCollider());
+        missile.Set(data.actor, dir.normalized, missileForce, damage, data.actor.GetCollider());
 
         data.actor.GetAnimator().SetTrigger(NovUtil.CrossbowShotHash);
         data.lastTimeShot = Time.time;
+        data.actor.ProcessActorData(new IActor.Data(!RightHanded ? IActor.Data.Type.DecrementLeftHand : IActor.Data.Type.DecrementRightHand));
     }
     public override void OnInputHold(ItemUseData data)
     {

@@ -21,12 +21,10 @@ public class PlayerCombat : PlayerAction
         base.Init(objects);
 
         master.Animator.SetFloat(NovUtil.CombatStaminaHash, 1f);
-        master.Equipment.AssignOnEquippedChanged(OnEquippedChanged);
     }
     private void OnEquippedChanged(ItemActive item, bool equipped)
     {
         // swap items animation, other setup?
-        
     }
     public override void ActionUpdate(out bool blockOther)
     {

@@ -29,11 +29,17 @@ public interface IActor
         {
             StaminaPerc,
             DecrementLeftHand,
-            DecrementRightHand
+            DecrementRightHand,
+            HitReport
         }
         public Type type;
         public float value;
 
+        public Data(Type type)
+        {
+            this.type = type;
+            this.value = 0;
+        }
         public Data(Type type, float value)
         {
             this.type = type;

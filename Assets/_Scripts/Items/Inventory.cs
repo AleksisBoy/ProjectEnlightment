@@ -28,8 +28,8 @@ public class Inventory
         else
         {
             items.Add(new Item(item, amount));
+            onInventoryChanged?.Invoke();
         }
-        onInventoryChanged?.Invoke();
     }
     public void Decrease(in EItem item, in int amount)
     {
@@ -90,7 +90,7 @@ public class Inventory
         invItem = null;
         return false;
     }
-    public void AddOnInventoryChanged(InventoryChange action)
+    public void AssignOnInventoryChanged(InventoryChange action)
     {
         onInventoryChanged += action;
     }

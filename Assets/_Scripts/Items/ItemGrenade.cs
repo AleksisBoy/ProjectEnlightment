@@ -19,17 +19,33 @@ public class ItemGrenade : ItemActive
     public override void OnEquip(ItemUseData data, IActor actor)
     {
         base.OnEquip(data, actor);
-        
+
+        GrenadeUseData grenData = data as GrenadeUseData;
+        grenData.lastRecordedAmount = data.amount;
     }
     public override void EquippedUpdate(ItemUseData data)
     {
+        GrenadeUseData grenData = data as GrenadeUseData;
+        if (grenData.lastRecordedAmount == data.amount) return;
 
+        grenData.lastRecordedAmount = data.amount;
+        if (grenData.amount <= 0)
+        {
+            grenData.instance.SetActive(false);
+        }
+        else
+        {
+            grenData.instance.SetActive(true);
+        }
     }
     public override void OnInputDown(ItemUseData data)
     {
         if (data.amount <= 0) return;
 
         GrenadeUseData grenData = data as GrenadeUseData;
+        if (grenData.onCooldown) return;
+
+        grenData.inputStart = true;
         grenData.holdTime = 0f;
         grenData.prepare = false;
     }
@@ -37,26 +53,43 @@ public class ItemGrenade : ItemActive
     public override void OnInputHold(ItemUseData data)
     {
         GrenadeUseData grenData = data as GrenadeUseData;
+        if (!grenData.inputStart) return;
+
+        if (grenData.prepare || grenData.onCooldown) return;
+
         grenData.holdTime += Time.deltaTime;
-        if (!grenData.prepare && grenData.holdTime > inputDelay)
+        if (grenData.holdTime > inputDelay)
         {
             grenData.prepare = true;
-            grenData.actor.GetAnimator().SetTrigger(NovUtil.ThrowPrepareHash);
+            grenData.actor.GetAnimator().SetBool(NovUtil.ThrowPrepareHash, true);
+
+            grenData.holdTime = 0f;
         }
     }
 
     public override void OnInputUp(ItemUseData data)
     {
-        GrenadeUseData grenData = data as GrenadeUseData; 
+        GrenadeUseData grenData = data as GrenadeUseData;
+        if (!grenData.inputStart) return;
+        grenData.inputStart = false;
+
+        if (data.amount <= 0)
+        {
+            data.actor.GetAnimator().SetBool(NovUtil.ThrowPrepareHash, false);
+            return;
+        }
         if (grenData.prepare)
         {
             ThrowGrenadeStart(grenData);
+            grenData.holdTime = 0f;
+            grenData.prepare = false;
         }
     }
     private void ThrowGrenadeStart(GrenadeUseData grenData)
     {
         grenData.actor.GetAnimator().SetTrigger(NovUtil.ThrowHash);
-        grenData.amount--;
+        // amount gets decreased in actor
+        grenData.onCooldown = true;
         grenData.actor.ProcessActorData(new IActor.Data(!RightHanded ? IActor.Data.Type.DecrementLeftHand : IActor.Data.Type.DecrementRightHand, 0f));
     }
     private void ThrowGrenade(GrenadeUseData grenData)
@@ -70,9 +103,10 @@ public class ItemGrenade : ItemActive
         {
             dir = ((pos + dir * raycastDistance) - grenData.instance.transform.position).normalized;
         }
-
+        grenData.onCooldown = false;
+        grenData.actor.GetAnimator().SetBool(NovUtil.ThrowPrepareHash, false);
         Grenade grenade = Instantiate(grenadePrefab, grenData.instance.transform.position, grenData.instance.transform.rotation);
-        grenade.Set(this, dir, throwForce);
+        grenade.Set(this, grenData.actor, dir, throwForce);
     }
     public override void CallEvent(ItemUseData data, NovUtil.AnimEvent animEvent)
     {
@@ -93,7 +127,10 @@ public class ItemGrenade : ItemActive
     public float BlowRadius => blowRadius;
     public class GrenadeUseData : ItemUseData
     {
+        public int lastRecordedAmount = 0;
         public float holdTime = 0f;
         public bool prepare = false;
+        public bool onCooldown = false;
+        public bool inputStart = false;
     }
 }

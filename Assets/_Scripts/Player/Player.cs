@@ -324,10 +324,13 @@ public class Player : MonoBehaviour, IAnimationDispatch, IHealth, IActor, IMana
                 SetCameraNoise(data.value);
                 break;
             case IActor.Data.Type.DecrementLeftHand:
-                Equipment.Inventory.Decrease(Equipment.SecondaryItem, 1);
+                Equipment.Decrease(Equipment.SecondaryItem, 1);
                 break;
             case IActor.Data.Type.DecrementRightHand:
-                Equipment.Inventory.Decrease(Equipment.MainItem, 1);
+                Equipment.Decrease(Equipment.MainItem, 1);
+                break;
+            case IActor.Data.Type.HitReport:
+                userInterface.ShowHitCrosshair();
                 break;
         }
     }

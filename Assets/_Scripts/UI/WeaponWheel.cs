@@ -127,7 +127,7 @@ public class WeaponWheel : MonoBehaviour
     public void SetInventory(Inventory inventory)
     {
         this.inventory = inventory;
-        inventory.AddOnInventoryChanged(UpdatePotionIcons);
+        inventory.AssignOnInventoryChanged(UpdatePotionIcons);
     }
     private void OnDestroy()
     {
