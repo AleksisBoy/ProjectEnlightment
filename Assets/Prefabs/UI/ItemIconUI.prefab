@@ -95,9 +95,9 @@ MonoBehaviour:
   m_fontSize: 52
   m_fontSizeBase: 52
   m_fontWeight: 400
-  m_enableAutoSizing: 0
-  m_fontSizeMin: 16
-  m_fontSizeMax: 32
+  m_enableAutoSizing: 1
+  m_fontSizeMin: 40
+  m_fontSizeMax: 52
   m_fontStyle: 1
   m_HorizontalAlignment: 4
   m_VerticalAlignment: 512
@@ -243,6 +243,8 @@ MonoBehaviour:
   background: {fileID: 8031108706228485330}
   icon: {fileID: 5092244207003359018}
   amountText: {fileID: 1790932063126017542}
+  selectWithPointer: 1
+  showAmountZero: 0
 --- !u!1 &7540469684762087053
 GameObject:
   m_ObjectHideFlags: 0
